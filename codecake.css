@@ -1,0 +1,43 @@
+/* CodeCake global styles */
+.codecake-light .editor,
+.codecake-dark .editor {
+    font-family: "Source Code Pro", monospace;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: normal;
+    line-height: 20px;
+}
+
+/* CodeCake light theme */
+.codecake-light .editor {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.codecake-light .token-operator, 
+.codecake-light .token-number {
+    color: #e57697;
+}
+.codecake-light .token-punctuation {
+    color: #3a464e;
+}
+.codecake-light .token-keyword {
+    color: #b351d9;
+}
+.codecake-light .token-constant {
+    color: #20118a;
+}
+.codecake-light .token-tag {
+    color: #3a9ff2;
+}
+.codecake-light .token-attribute {
+    color: #f38d00;
+}
+.codecake-light .token-string {
+    color: #00a17d;
+}
+.codecake-light .token-comment {
+    color: #969896;
+}
+
+/* CodeCake dark theme */
