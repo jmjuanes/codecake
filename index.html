@@ -1,0 +1,48 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>CodeCake: tiny code editor for the web</title>
+        <link rel="stylesheet" href="./codecake.css">
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                background: #F6F8F8;
+                margin: 0px;
+                padding: 0px;
+            }
+            .wrapper {
+                background-color: #ffffff;
+                border-radius: 8px;
+                box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2);
+                margin: 48px;
+                padding: 24px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="editor" class="codecake-light wrapper"></div>
+        <script type="module">
+            import {CodeCake} from "./codecake.js";
+            import {highlight} from "./highlight.js";
+            // import {lineNumbers} from './linenumbers.js'
+    
+            const parent = document.getElementById("editor");
+            const cake = CodeCake(parent, {
+                "className": "editor",
+            });
+
+            // Highlight plugin
+            cake.addPlugin(highlight("js"));
+  
+            // Custom plugin to save content in localStorage
+            cake.addPlugin(editor => {
+                return localStorage.setItem("code", editor.textContent);
+            });
+
+            // Restore previous code
+            cake.update(localStorage.getItem("code") || "");
+        </script>
+    </body>
+</html>
