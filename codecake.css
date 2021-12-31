@@ -1,6 +1,8 @@
 /* CodeCake global styles */
 .codecake-light .editor,
-.codecake-dark .editor {
+.codecake-light .lines,
+.codecake-dark .editor,
+.codecake-dark .lines {
     font-family: "Source Code Pro", monospace;
     font-size: 14px;
     font-weight: 400;
@@ -9,7 +11,8 @@
 }
 
 /* CodeCake light theme */
-.codecake-light .editor {
+.codecake-light .editor, 
+.codecake-light .lines {
     background-color: #ffffff;
     color: #000000;
 }
