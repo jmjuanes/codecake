@@ -26,15 +26,16 @@
         <script type="module">
             import {CodeCake} from "./codecake.js";
             import {highlight} from "./highlight.js";
-            // import {lineNumbers} from './linenumbers.js'
+            import {lineNumbers} from './linenumbers.js'
     
             const parent = document.getElementById("editor");
             const cake = CodeCake(parent, {
                 "className": "editor",
             });
 
-            // Highlight plugin
+            // Core plugins
             cake.addPlugin(highlight("js"));
+            cake.addPlugin(lineNumbers({}));
   
             // Custom plugin to save content in localStorage
             cake.addPlugin(editor => {
