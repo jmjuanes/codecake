@@ -3,7 +3,7 @@ export const lineNumbers = options => {
     let lines = null; // Lines container
     return editor => {
         if (!lines) {
-            const parent = editor.parentNode;
+            // const parent = editor.parentNode;
             const container = document.createElement("div");
             // container.className = options.className || "lines";
             container.classList.add("CodeCake-lines");
@@ -21,7 +21,7 @@ export const lineNumbers = options => {
             container.appendChild(lines);
 
             // Append lines wrapper
-            parent.parentNode.insertBefore(container, editor);
+            editor.parentNode.insertBefore(container, editor);
             editor.addEventListener("scroll", () => {
                 lines.style.top = `-${editor.scrollTop}`;
             });
