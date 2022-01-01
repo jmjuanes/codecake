@@ -22,7 +22,7 @@
         </style>
     </head>
     <body>
-        <div id="editor" class="codecake-light wrapper"></div>
+        <div id="editor" class="CodeCake CodeCake-light wrapper"></div>
         <script type="module">
             import {CodeCake} from "./codecake.js";
             import {highlight} from "./highlight.js";
@@ -30,12 +30,14 @@
     
             const parent = document.getElementById("editor");
             const cake = CodeCake(parent, {
-                "className": "editor",
+                // "className": "editor",
             });
 
             // Core plugins
             cake.addPlugin(highlight("js"));
-            cake.addPlugin(lineNumbers({}));
+            cake.addPlugin(lineNumbers({
+                // "className": "",
+            }));
   
             // Custom plugin to save content in localStorage
             cake.addPlugin(editor => {
