@@ -4,10 +4,10 @@ export const lineNumbers = options => {
     return editor => {
         if (!lines) {
             const parent = editor.parentNode;
-
-            // Lines container component
             const container = document.createElement("div");
-            container.className = options.className || "lines";
+            // container.className = options.className || "lines";
+            container.classList.add("CodeCake-lines");
+            options.className && container.classList.add(options.className);
             container.style.position = "relative";
 
             // Initialize lines element
@@ -17,10 +17,11 @@ export const lineNumbers = options => {
             lines.style.left = "0px";
             lines.style.bottom = "0px";
             lines.style.overflow = "hidden";
+            lines.style.width = options.width || "40px"; // Lines block width
             container.appendChild(lines);
 
             // Append lines wrapper
-            parent.parentNode.insertBefore(linesWrapper, editor);
+            parent.parentNode.insertBefore(container, editor);
             editor.addEventListener("scroll", () => {
                 lines.style.top = `-${editor.scrollTop}`;
             });
