@@ -53,6 +53,7 @@ export const CodeCake = (parent, options) => {
     editor.style.overflowWrap = "break-word";
     editor.style.overflowY = "auto";
     editor.style.whiteSpace = "pre-wrap";
+    editor.style.height = "100%";
 
     // Append editor to parent
     parent.appendChild(editor);
