@@ -1,6 +1,7 @@
 export const lineNumbers = options => {
     options = options || {};
     let lines = null; // Lines container
+    let prevCount = -1; // Prev number of lines
     return editor => {
         if (!lines) {
             // const parent = editor.parentNode;
@@ -9,6 +10,10 @@ export const lineNumbers = options => {
             container.classList.add("CodeCake-lines");
             options.className && container.classList.add(options.className);
             container.style.position = "relative";
+            // container.style.float = "left";
+            container.style.height = "100%";
+            container.style.width = options.width || "40px";
+            container.style.overflow = "hidden";
 
             // Initialize lines element
             lines = document.createElement("div");
@@ -17,11 +22,13 @@ export const lineNumbers = options => {
             lines.style.left = "0px";
             lines.style.bottom = "0px";
             lines.style.overflow = "hidden";
-            lines.style.width = options.width || "40px"; // Lines block width
             container.appendChild(lines);
 
-            // Append lines wrapper
-            editor.parentNode.insertBefore(container, editor);
+            // Fix editor and append lines container
+            editor.parentNode.style.display = "flex"; // Display items in a single row
+            editor.style.order = "2";
+            editor.style.flexGrow = "1"; // Expand to all available space
+            editor.parentNode.appendChild(container);
             editor.addEventListener("scroll", () => {
                 lines.style.top = `-${editor.scrollTop}`;
             });
@@ -30,7 +37,10 @@ export const lineNumbers = options => {
         // Insert line numbers
         const code = editor.textContent || "";
         const count = code.replace(/n+$/, "\n").split("\n").length;
-        const linesList = Array.from({length: count}, (v, i) => i + 1);
-        lines.innerText = linesList.join("\n");
+        if (prevCount !== count) {
+            const linesList = Array.from({length: count}, (v, i) => i + 1);
+            lines.innerText = linesList.join("\n");
+            prevCount = count; // Update num lines
+        }
     };
 };
