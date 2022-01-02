@@ -9,6 +9,9 @@
     font-weight: 400;
     line-height: 20px;
 }
+.CodeCake-lines {
+    text-align: right;
+}
 
 /* CodeCake light theme */
 .CodeCake-light .CodeCake-editor, 
