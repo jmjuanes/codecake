@@ -3,28 +3,33 @@
     font-family: "Source Code Pro", monospace;
     letter-spacing: normal;
 }
-.CodeCake-editor,
-.CodeCake-lines {
+.CodeCake-editor {
     font-size: 14px;
     font-weight: 400;
     line-height: 20px;
 }
 .CodeCake-lines {
+    font-size: 12px;
+    line-height: 20px;
     text-align: right;
 }
 
 /* CodeCake light theme */
-.CodeCake-light .CodeCake-editor, 
-.CodeCake-light .CodeCake-lines {
+.CodeCake-light .CodeCake-editor {
     background-color: #ffffff;
     color: #000000;
 }
+.CodeCake-light .CodeCake-lines {
+    color: #6cb1c5;
+}
 
 .CodeCake-light .token-operator, 
-.CodeCake-light .token-number {
+.CodeCake-light .token-number,
+.CodeCake-light .token-unit {
     color: #e57697;
 }
-.CodeCake-light .token-punctuation {
+.CodeCake-light .token-punctuation, 
+.CodeCake-light .token-property {
     color: #3a464e;
 }
 .CodeCake-light .token-keyword {
@@ -33,10 +38,12 @@
 .CodeCake-light .token-constant {
     color: #20118a;
 }
-.CodeCake-light .token-tag {
+.CodeCake-light .token-tag,
+.CodeCake-light .token-function {
     color: #3a9ff2;
 }
-.CodeCake-light .token-attribute {
+.CodeCake-light .token-attribute,
+.CodeCake-light .token-selector {
     color: #f38d00;
 }
 .CodeCake-light .token-string {
