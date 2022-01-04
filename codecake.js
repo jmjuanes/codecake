@@ -44,7 +44,7 @@ export const CodeCake = (parent, options) => {
 
     // Create editor element and apply attributes and styles
     const editor = document.createElement("div");
-    editor.setAttribute("contenteditable", "plaintext-only");
+    editor.setAttribute("contenteditable", "true"); // "plaintext-only" breaks in Firefox
     editor.setAttribute("spellcheck", options.spellcheck ? "true" : "false");
     // editor.className = options.className || "editor";
     editor.classList.add("CodeCake-editor");
