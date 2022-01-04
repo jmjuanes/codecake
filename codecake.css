@@ -14,6 +14,20 @@
     text-align: right;
 }
 
+/* Editor scrollbar */
+.CodeCake-editor::-webkit-scrollbar {
+    width: 8px;
+}
+.CodeCake-editor::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+.CodeCake-editor::-webkit-scrollbar-thumb {
+    border-radius: 16px;
+}
+.CodeCake-editor::-webkit-scrollbar-button {
+    display: none;
+}
+
 /* CodeCake light theme */
 .CodeCake-light {
     background-color: #ffffff;
@@ -21,8 +35,15 @@
 .CodeCake-light .CodeCake-editor {
     color: #000000;
 }
+.CodeCake-light .CodeCake-editor::-webkit-scrollbar-thumb {
+    background-color: #dedfe3;
+}
+.CodeCake-light .CodeCake-editor::-webkit-scrollbar-thumb:hover {
+    background-color: #cbccd2;
+}
 .CodeCake-light .CodeCake-lines {
-    color: #6cb1c5;
+    /* color: #6cb1c5; */
+    color: #878a98;
 }
 
 .CodeCake-light .token-operator, 
@@ -62,6 +83,12 @@
 .CodeCake-dark .CodeCake-editor {
     color: #aab2d4;
 }
+.CodeCake-dark .CodeCake-editor::-webkit-scrollbar-thumb {
+    background-color: #99aaff15;
+}
+.CodeCake-dark .CodeCake-editor::-webkit-scrollbar-thumb:hover {
+    background-color: #99aaff22;
+}
 .CodeCake-dark .CodeCake-lines {
     color: #757ca3;
 }
@@ -93,7 +120,6 @@
     color: #bdc7f5;
 }
 .CodeCake-dark .token-punctuation {
-    /* color: #dd556e; */
     color: #8bb3f4;
 }
 .CodeCake-dark .token-string {
