@@ -10,11 +10,11 @@ const escape = text => {
 const insertText = text => document.execCommand("insertHTML", false, escape(text));
 
 // Tiny debounce implementation
-const debounce = (wait, fn) => {
+const debounce = fn => {
     let timer = null;
-    return () => {
+    return wait => {
         clearTimeout(timer);
-        timer = window.setTimeout(fn, wait); 
+        wait === 1 ? fn() : (timer = window.setTimeout(fn, wait)); 
     };
 };
 
@@ -36,7 +36,7 @@ const getTextNodeAtPosition = (root, index) => {
 //Code editor component
 export const CodeCake = (parent, options) => {
     options = options || {};
-    const tabSize = options.tabSize || 4; // || " ".repeat(4); // Default tab character
+    const tabSize = options.tabSize || 4;
     const tabChar = " ".repeat(tabSize);
     const plugins = []; // List of available plugins
     let prev = ""; // Previous text
@@ -58,16 +58,21 @@ export const CodeCake = (parent, options) => {
     // Append editor to parent
     parent.appendChild(editor);
 
-    // Get current editor code
+    // Manage code
     const getCode = () => editor.textContent || "";
+    const setCode = (newCode, wait) => {
+        editor.textContent = newCode;
+        debouncePluginsCall(wait || 50);
+    };
 
     // Get code before current caret position
     const getCodeBefore = () => {
-        return getCode().slice(0, getCurrentSelection().focusOffset);
+        const {startContainer, startOffset} = getCurrentSelection().getRangeAt(0);
+        const range = document.createRange();
+        range.selectNodeContents(editor);
+        range.setEnd(startContainer, startOffset);
+        return range.toString();
     };
-
-    // Update the code displayed in the editor
-    const updateCode = newCode => editor.textContent = newCode;
 
     // Save current position
     const savePosition = () => {
@@ -92,7 +97,8 @@ export const CodeCake = (parent, options) => {
     };
 
     // Debounce plugins call
-    const debouncePluginsCall = debounce(25, () => {
+    const debouncePluginsCall = debounce(() => {
+        console.log("CALL PLUGINS");
         const prevPosition = savePosition();
         plugins.forEach(p => p(editor)); // Run all plugins
         restorePosition(prevPosition);
@@ -110,10 +116,7 @@ export const CodeCake = (parent, options) => {
         const textBefore = text.slice(0, pos);
         //Split the current text by \n and get the last line
         const lines = textBefore.split("\n");
-        if (lines.length === 0) {
-            return restorePosition(pos); // --> do nothing
-        }
-        const line = lines[lines.length - 1]; //Get the current line --> the last one
+        const line = lines[lines.length - 1] || ""; 
         //Check for not only space characters or empty line
         if (line.trim() !== "" || line === "") {
             return restorePosition(pos); // --> do nothing
@@ -121,14 +124,14 @@ export const CodeCake = (parent, options) => {
         //Prevent default --> we will remove up to a tab
         event.preventDefault();
         const removeChars = (line.length % tabSize === 0) ? tabSize : line.length % tabSize;
-        updateCode(text.substring(0, pos - removeChars) + text.substring(pos, text.length));
+        setCode(text.substring(0, pos - removeChars) + text.substring(pos, text.length), 1);
+        prev = getCode(); // Prevent calling plugins twice
         // Restore cursor position
         restorePosition(pos - removeChars);
     };
 
     // Handle new line character inserted
     const handleNewLine = event => {
-        // Get the last line
         const lines = getCodeBefore().split("\n");
         const lastLine = lines[lines.length - 1];
         // Get the lst indentation and the last character
@@ -158,28 +161,18 @@ export const CodeCake = (parent, options) => {
 
     // Register key down --> parse inserted key
     editor.addEventListener("keydown", event => {
-        if (event.defaultPrevented) {
-            return;
-        }
-        prev = getCode(); // Save current code
-        //Check for new line event
-        if (event.keyCode === 13) {
-            return handleNewLine(event);
-        }
-        //Check for backspace key
-        if (event.keyCode === 8) {
-            return handleBackspace(event);
-        }
-        //Check for tab key
-        if (event.keyCode === 9) {
-            return handleTab(event);
+        if (!event.defaultPrevented) {
+            prev = getCode(); // Save current code
+            if (event.keyCode === 13) { return handleNewLine(event); }
+            if (event.keyCode === 8) { return handleBackspace(event); }
+            if (event.keyCode === 9) { return handleTab(event); }
         }
     });
 
     // Register key up listener
     editor.addEventListener("keyup", event => {
         if (prev !== getCode()) {
-            return debouncePluginsCall();
+            return debouncePluginsCall(250);
         }
     });
 
@@ -189,15 +182,12 @@ export const CodeCake = (parent, options) => {
 
     // Return editor actions
     return {
-        "update": newCode => {
-            updateCode(newCode);
-            debouncePluginsCall();
-        },
+        "getCode": getCode,
+        "setCode": c => setCode(c),
         "addPlugin": p => {
             plugins.push(p);
             debouncePluginsCall();
         },
-        "toString": getCode,
-        "clear": () => updateCode(""),
+        "clear": () => setCode(""),
     };
 };
