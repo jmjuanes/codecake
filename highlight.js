@@ -54,7 +54,7 @@ const regexp = {
     "htmlTag": /^[\w\d\-\_]/,
     "htmlPunctuation": /^[\/=<>]/,
     "htmlAttribute": /^([\w\d\.\-\_]+)\=/,
-    "jsKeyword": new RegExp(`^(${jsKeywords.join("|")})$`, ""),
+    "jsKeyword": new RegExp(`^(${jsKeywords.join("|")})`, ""),
     "jsConstant": new RegExp(`^(${jsConstants.join("|")})[^\w]`, ""),
     "jsFunction": /^([a-zA-Z][\w]*)\ *\(/,
     "cssKeyword": new RegExp(`^(${cssKeywords.join("|")})`, ""),
@@ -175,6 +175,7 @@ const getNextToken = ctx => {
         else if (regexp.operator.test(c)) { return createToken(1); } //Operator token
         else if (regexp.number.test(c)) { return createToken(6); } //Number
         else if (regexp.jsConstant.test(ctx.code)) { return createToken(4); } //Language constant
+        else if (regexp.jsKeyword.test(ctx.code)) { return createToken(3); } //Keyword
         else if (regexp.jsFunction.test(ctx.code)) { return createToken(12); } // Function
         else if (regexp.word.test(c)) { return createToken(3); } //Keyword
     }
