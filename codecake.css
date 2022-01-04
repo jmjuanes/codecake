@@ -15,8 +15,10 @@
 }
 
 /* CodeCake light theme */
-.CodeCake-light .CodeCake-editor {
+.CodeCake-light {
     background-color: #ffffff;
+}
+.CodeCake-light .CodeCake-editor {
     color: #000000;
 }
 .CodeCake-light .CodeCake-lines {
@@ -54,3 +56,49 @@
 }
 
 /* CodeCake dark theme */
+.CodeCake-dark {
+    background-color: #272b3f;
+}
+.CodeCake-dark .CodeCake-editor {
+    color: #aab2d4;
+}
+.CodeCake-dark .CodeCake-lines {
+    color: #757ca3;
+}
+
+.CodeCake-dark .token-attribute,
+.CodeCake-dark .token-selector {
+    color: #80d0ff;
+}
+.CodeCake-dark .token-comment {
+    color: #58628d;
+}
+.CodeCake-dark .token-constant, 
+.CodeCake-dark .token-number {
+    color: #ffae80;
+}
+.CodeCake-dark .token-function {
+    color: #22c1dd;
+} 
+.CodeCake-dark .token-tag {
+    color: #6e9af7;
+}
+.CodeCake-dark .token-keyword {
+    color: #af89f5;
+}
+.CodeCake-dark .token-operator {
+    color: #ad388c;
+}
+.CodeCake-dark .token-property {
+    color: #bdc7f5;
+}
+.CodeCake-dark .token-punctuation {
+    /* color: #dd556e; */
+    color: #8bb3f4;
+}
+.CodeCake-dark .token-string {
+    color: #9bcd65;
+}
+.CodeCake-dark .token-unit {
+    color: #dd556e;
+}
