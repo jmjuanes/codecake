@@ -92,14 +92,14 @@ const createContext = (code, language, endStr) => {
 
 //Check if the provided value is a keyword
 const isKeyword = (value, lang) => {
+    let match = null;
     if (lang === "js") {
-        return regexp.jsKeyword.test(value);
+        match = value.match(regexp.jsKeyword);
     }
-    if (lang === "css" || lang === "scss") {
-        return regexp.cssKeyword.test(value);
+    else if (lang === "css" || lang === "scss") {
+        match = value.match(regexp.cssKeyword);
     }
-    // Default value --> not a keyword
-    return false;
+    return match && (match[0] || "").length === value.length;
 };
 
 //Check if is comment token
