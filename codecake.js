@@ -44,9 +44,8 @@ export const CodeCake = (parent, options) => {
 
     // Create editor element and apply attributes and styles
     const editor = document.createElement("div");
-    editor.setAttribute("contenteditable", "true"); // "plaintext-only" breaks in Firefox
+    !options.readonly && editor.setAttribute("contenteditable", "plaintext-only");
     editor.setAttribute("spellcheck", options.spellcheck ? "true" : "false");
-    // editor.className = options.className || "editor";
     editor.classList.add("CodeCake-editor");
     options.className && editor.classList.add(options.className); // Apply custom css
     editor.style.outline = "none";
@@ -54,9 +53,15 @@ export const CodeCake = (parent, options) => {
     editor.style.overflowY = "auto";
     editor.style.whiteSpace = "pre-wrap";
     editor.style.height = "100%";
+    editor.style.width = "100%";
 
     // Append editor to parent
     parent.appendChild(editor);
+
+    // Check if plainText is not supported
+    if (!options.readonly && editor.contentEditable !== "plaintext-only") {
+        editor.setAttribute("contenteditable", "true");
+    }
 
     // Manage code
     const getCode = () => editor.textContent || "";
@@ -76,32 +81,27 @@ export const CodeCake = (parent, options) => {
 
     // Save current position
     const savePosition = () => {
-        if (focus) {
-            const selection = getCurrentSelection();
-            const range = selection.getRangeAt(0);
-            range.setStart(parent, 0);
-            return range.toString().length;
-        }
+        const selection = getCurrentSelection();
+        const range = selection.getRangeAt(0);
+        range.setStart(parent, 0);
+        return range.toString().length;
     };
 
     // Restore a position
     const restorePosition = index => {
-        if (focus) {
-            const selection = getCurrentSelection();
-            const pos = getTextNodeAtPosition(editor, index);
-            selection.removeAllRanges();
-            const range = new Range();
-            range.setStart(pos.node, pos.position);
-            selection.addRange(range);
-        }
+        const selection = getCurrentSelection();
+        const pos = getTextNodeAtPosition(editor, index);
+        selection.removeAllRanges();
+        const range = new Range();
+        range.setStart(pos.node, pos.position);
+        selection.addRange(range);
     };
 
     // Debounce plugins call
     const debouncePluginsCall = debounce(() => {
-        console.log("CALL PLUGINS");
-        const prevPosition = savePosition();
+        const prevPosition = focus && savePosition();
         plugins.forEach(p => p(editor)); // Run all plugins
-        restorePosition(prevPosition);
+        focus && restorePosition(prevPosition);
     });
 
     //Handle backspace down
@@ -132,6 +132,7 @@ export const CodeCake = (parent, options) => {
 
     // Handle new line character inserted
     const handleNewLine = event => {
+        event.preventDefault();
         const lines = getCodeBefore().split("\n");
         const lastLine = lines[lines.length - 1];
         // Get the lst indentation and the last character
@@ -139,17 +140,14 @@ export const CodeCake = (parent, options) => {
         const lastChar = lastLine.trim().slice(-1);
         // Check for no last indentation character
         if (lastIndentation === null || typeof lastIndentation[0] !== "string") {
-            return; // <--- Add new line without indentation
+            return insertText("\n"); // <--- Add new line without indentation
         }
         let indentation = lastIndentation[0]; // Default indentation
         // Check if the last character is a new object or array indicator
         if (lastChar === "{" || lastChar === "[") {
             indentation = lastIndentation[0] + tabChar;
         }
-        if (indentation.length > 0) {
-            event.preventDefault(); // <<-- Prevent newline
-            return insertText("\n" + indentation);
-        }
+        return insertText("\n" + indentation);
     };
 
     // Handle tab
@@ -161,7 +159,7 @@ export const CodeCake = (parent, options) => {
 
     // Register key down --> parse inserted key
     editor.addEventListener("keydown", event => {
-        if (!event.defaultPrevented) {
+        if (!event.defaultPrevented && !options.readonly) {
             prev = getCode(); // Save current code
             if (event.keyCode === 13) { return handleNewLine(event); }
             if (event.keyCode === 8) { return handleBackspace(event); }
@@ -171,7 +169,7 @@ export const CodeCake = (parent, options) => {
 
     // Register key up listener
     editor.addEventListener("keyup", event => {
-        if (prev !== getCode()) {
+        if (!options.readonly && prev !== getCode()) {
             return debouncePluginsCall(250);
         }
     });
