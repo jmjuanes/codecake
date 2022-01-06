@@ -12,16 +12,17 @@ export const lineNumbers = options => {
             container.style.position = "relative";
             // container.style.float = "left";
             container.style.height = "100%";
-            container.style.width = options.width || "40px";
+            container.style.width = options.width || "48px";
             container.style.overflow = "hidden";
 
             // Initialize lines element
             lines = document.createElement("div");
             lines.style.position = "absolute";
             lines.style.top = "0px";
-            lines.style.left = "0px";
+            lines.style.right = "0px";
             lines.style.bottom = "0px";
             lines.style.overflow = "hidden";
+            lines.style.paddingRight = options.padding || "12px";
             container.appendChild(lines);
 
             // Fix editor and append lines container
