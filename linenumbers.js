@@ -20,7 +20,7 @@ export const lineNumbers = options => {
             ctx.lines.style.right = "0px";
             ctx.lines.style.bottom = "0px";
             ctx.lines.style.overflow = "hidden";
-            ctx.lines.style.paddingRight = options.padding || "12px";
+            ctx.lines.style.paddingRight = options.padding || "16px";
             container.appendChild(ctx.lines);
 
             // Fix editor and append lines container
