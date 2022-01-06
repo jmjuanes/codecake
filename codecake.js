@@ -37,50 +37,55 @@ const getTextNodeAtPosition = (root, index) => {
 export const CodeCake = (parent, options) => {
     options = options || {};
     const tabSize = options.tabSize || 4;
-    const tabChar = " ".repeat(tabSize);
     const plugins = []; // List of available plugins
-    let prev = ""; // Previous text
-    let focus = false;
+    const prevCode = ""; // Previous code
+    const ctx = {
+        tab: " ".repeat(tabSize),
+        readonly: !!options.readonly,
+        focus: false,
+        position: null, // Current position
+        editor: document.createElement("div"), // Editor referente
+        keydownEvents: [],
+        keyupEvents: [],
+    };
 
     // Create editor element and apply attributes and styles
-    const editor = document.createElement("div");
-    !options.readonly && editor.setAttribute("contenteditable", "plaintext-only");
-    editor.setAttribute("spellcheck", options.spellcheck ? "true" : "false");
-    editor.classList.add("CodeCake-editor");
-    options.className && editor.classList.add(options.className); // Apply custom css
-    editor.style.outline = "none";
-    editor.style.overflowWrap = "break-word";
-    editor.style.overflowY = "auto";
-    editor.style.whiteSpace = "pre-wrap";
-    editor.style.height = "100%";
-    editor.style.width = "100%";
+    !options.readonly && ctx.editor.setAttribute("contenteditable", "plaintext-only");
+    ctx.editor.setAttribute("spellcheck", options.spellcheck ? "true" : "false");
+    ctx.editor.classList.add("CodeCake-editor");
+    options.className && ctx.editor.classList.add(options.className); // Apply custom css
+    ctx.editor.style.outline = "none";
+    ctx.editor.style.overflowWrap = "break-word";
+    ctx.editor.style.overflowY = "auto";
+    ctx.editor.style.whiteSpace = "pre-wrap";
+    ctx.editor.style.height = "100%";
+    ctx.editor.style.width = "100%";
 
     // Append editor to parent
-    parent.appendChild(editor);
+    parent.appendChild(ctx.editor);
 
     // Check if plainText is not supported
-    if (!options.readonly && editor.contentEditable !== "plaintext-only") {
-        editor.setAttribute("contenteditable", "true");
+    if (!options.readonly && ctx.editor.contentEditable !== "plaintext-only") {
+        ctx.editor.setAttribute("contenteditable", "true");
     }
 
     // Manage code
-    const getCode = () => editor.textContent || "";
-    const setCode = (newCode, wait) => {
-        editor.textContent = newCode;
+    ctx.getCode = () => ctx.editor.textContent || "";
+    ctx.setCode = (newCode, wait) => {
+        ctx.editor.textContent = newCode;
         debouncePluginsCall(wait || 50);
     };
-
     // Get code before current caret position
-    const getCodeBefore = () => {
+    ctx.getCodeBefore = () => {
         const {startContainer, startOffset} = getCurrentSelection().getRangeAt(0);
         const range = document.createRange();
-        range.selectNodeContents(editor);
+        range.selectNodeContents(ctx.editor);
         range.setEnd(startContainer, startOffset);
         return range.toString();
     };
 
     // Save current position
-    const savePosition = () => {
+    ctx.savePosition = () => {
         const selection = getCurrentSelection();
         const range = selection.getRangeAt(0);
         range.setStart(parent, 0);
@@ -88,9 +93,9 @@ export const CodeCake = (parent, options) => {
     };
 
     // Restore a position
-    const restorePosition = index => {
+    ctx.restorePosition = index => {
         const selection = getCurrentSelection();
-        const pos = getTextNodeAtPosition(editor, index);
+        const pos = getTextNodeAtPosition(ctx.editor, index);
         selection.removeAllRanges();
         const range = new Range();
         range.setStart(pos.node, pos.position);
@@ -99,9 +104,9 @@ export const CodeCake = (parent, options) => {
 
     // Debounce plugins call
     const debouncePluginsCall = debounce(() => {
-        const prevPosition = focus && savePosition();
-        plugins.forEach(p => p(editor)); // Run all plugins
-        focus && restorePosition(prevPosition);
+        ctx.position = ctx.focus && ctx.savePosition();
+        plugins.forEach(p => p(ctx)); // Run all plugins
+        ctx.focus && ctx.restorePosition(ctx.position);
     });
 
     //Handle backspace down
@@ -110,30 +115,29 @@ export const CodeCake = (parent, options) => {
         if (selection.type !== "Caret") {
             return; // --> do nothing
         }
-        const pos = savePosition();
-        // const pos = selection.focusOffset;
-        const text = getCode();
+        const pos = ctx.savePosition();
+        const text = ctx.getCode();
         const textBefore = text.slice(0, pos);
         //Split the current text by \n and get the last line
         const lines = textBefore.split("\n");
         const line = lines[lines.length - 1] || ""; 
         //Check for not only space characters or empty line
         if (line.trim() !== "" || line === "") {
-            return restorePosition(pos); // --> do nothing
+            return ctx.restorePosition(pos); // --> do nothing
         }
         //Prevent default --> we will remove up to a tab
         event.preventDefault();
         const removeChars = (line.length % tabSize === 0) ? tabSize : line.length % tabSize;
-        setCode(text.substring(0, pos - removeChars) + text.substring(pos, text.length), 1);
-        prev = getCode(); // Prevent calling plugins twice
+        ctx.setCode(text.substring(0, pos - removeChars) + text.substring(pos, text.length), 1);
+        prevCode = ctx.getCode(); // Prevent calling plugins twice
         // Restore cursor position
-        restorePosition(pos - removeChars);
+        ctx.restorePosition(pos - removeChars);
     };
 
     // Handle new line character inserted
     const handleNewLine = event => {
         event.preventDefault();
-        const lines = getCodeBefore().split("\n");
+        const lines = ctx.getCodeBefore().split("\n");
         const lastLine = lines[lines.length - 1];
         // Get the lst indentation and the last character
         const lastIndentation = /^([\s]*)/.exec(lastLine);
@@ -142,11 +146,7 @@ export const CodeCake = (parent, options) => {
         if (lastIndentation === null || typeof lastIndentation[0] !== "string") {
             return insertText("\n"); // <--- Add new line without indentation
         }
-        let indentation = lastIndentation[0]; // Default indentation
-        // Check if the last character is a new object or array indicator
-        if (lastChar === "{" || lastChar === "[") {
-            indentation = lastIndentation[0] + tabChar;
-        }
+        const indentation = /[\[\{]]/.test(lastChar) ? lastIndentation[0] + ctx.tab : lastIndentation[0];
         return insertText("\n" + indentation);
     };
 
@@ -154,13 +154,14 @@ export const CodeCake = (parent, options) => {
     // TODO: handle block indentation
     const handleTab = event => {
         event.preventDefault();
-        return event.shiftKey ? handleBackspace(event) : insertText(tabChar);
+        return event.shiftKey ? handleBackspace(event) : insertText(ctx.tab);
     };
 
     // Register key down --> parse inserted key
-    editor.addEventListener("keydown", event => {
-        if (!event.defaultPrevented && !options.readonly) {
-            prev = getCode(); // Save current code
+    ctx.editor.addEventListener("keydown", event => {
+        ctx.keydownEvents.forEach(fn => fn(event));
+        if (!event.defaultPrevented && !ctx.editor.readonly) {
+            prevCode = ctx.getCode(); // Save current code
             if (event.keyCode === 13) { return handleNewLine(event); }
             if (event.keyCode === 8) { return handleBackspace(event); }
             if (event.keyCode === 9) { return handleTab(event); }
@@ -168,24 +169,25 @@ export const CodeCake = (parent, options) => {
     });
 
     // Register key up listener
-    editor.addEventListener("keyup", event => {
-        if (!options.readonly && prev !== getCode()) {
+    ctx.editor.addEventListener("keyup", event => {
+        ctx.keyupEvents.forEach(fn => fn(event));
+        if (!event.defaultPrevented && !ctx.readonly && prevCode !== ctx.getCode()) {
             return debouncePluginsCall(250);
         }
     });
 
     // Focus listeners
-    editor.addEventListener("focus", () => focus = true);
-    editor.addEventListener("blur", () => focus = false);
+    ctx.editor.addEventListener("focus", () => ctx.focus = true);
+    ctx.editor.addEventListener("blur", () => ctx.focus = false);
 
     // Return editor actions
     return {
-        "getCode": getCode,
-        "setCode": c => setCode(c),
+        "getCode": ctx.getCode,
+        "setCode": c => ctx.setCode(c),
         "addPlugin": p => {
             plugins.push(p);
             debouncePluginsCall();
         },
-        "clear": () => setCode(""),
+        "clear": () => ctx.setCode(""),
     };
 };
