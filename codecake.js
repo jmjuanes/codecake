@@ -38,7 +38,7 @@ export const CodeCake = (parent, options) => {
     options = options || {};
     const tabSize = options.tabSize || 4;
     const plugins = []; // List of available plugins
-    const prevCode = ""; // Previous code
+    let prevCode = ""; // Previous code
     const ctx = {
         tab: " ".repeat(tabSize),
         readonly: !!options.readonly,
