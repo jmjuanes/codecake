@@ -1,9 +1,7 @@
 export const lineNumbers = options => {
     options = options || {};
-    let lines = null; // Lines container
-    let prevCount = -1; // Prev number of lines
-    return editor => {
-        if (!lines) {
+    return ctx => {
+        if (!ctx.lines) {
             // const parent = editor.parentNode;
             const container = document.createElement("div");
             // container.className = options.className || "lines";
@@ -16,32 +14,31 @@ export const lineNumbers = options => {
             container.style.overflow = "hidden";
 
             // Initialize lines element
-            lines = document.createElement("div");
-            lines.style.position = "absolute";
-            lines.style.top = "0px";
-            lines.style.right = "0px";
-            lines.style.bottom = "0px";
-            lines.style.overflow = "hidden";
-            lines.style.paddingRight = options.padding || "12px";
-            container.appendChild(lines);
+            ctx.lines = document.createElement("div");
+            ctx.lines.style.position = "absolute";
+            ctx.lines.style.top = "0px";
+            ctx.lines.style.right = "0px";
+            ctx.lines.style.bottom = "0px";
+            ctx.lines.style.overflow = "hidden";
+            ctx.lines.style.paddingRight = options.padding || "12px";
+            container.appendChild(ctx.lines);
 
             // Fix editor and append lines container
-            editor.parentNode.style.display = "flex"; // Display items in a single row
-            editor.style.order = "2";
-            editor.style.flexGrow = "1"; // Expand to all available space
-            editor.parentNode.appendChild(container);
-            editor.addEventListener("scroll", () => {
-                lines.style.top = `-${editor.scrollTop}`;
+            ctx.editor.parentNode.style.display = "flex"; // Display items in a single row
+            ctx.editor.style.order = "2";
+            ctx.editor.style.flexGrow = "1"; // Expand to all available space
+            ctx.editor.parentNode.appendChild(container);
+            ctx.editor.addEventListener("scroll", () => {
+                ctx.lines.style.top = `-${ctx.editor.scrollTop}`;
             });
         }
 
         // Insert line numbers
-        const code = editor.textContent || "";
-        const count = code.replace(/n+$/, "\n").split("\n").length;
-        if (prevCount !== count) {
+        const count = ctx.getCode().replace(/n+$/, "\n").split("\n").length;
+        if (ctx.linesCount !== count) {
             const linesList = Array.from({length: count}, (v, i) => i + 1);
-            lines.innerText = linesList.join("\n");
-            prevCount = count; // Update num lines
+            ctx.lines.innerText = linesList.join("\n");
+            ctx.linesCount = count; // Update num lines
         }
     };
 };

@@ -286,7 +286,7 @@ export const highlightStr = (value, language) => {
 
 // Highlight plugin for CodeCake
 export const highlight = language => {
-    return editor => {
-        editor.innerHTML = highlightStr(editor.textContent, language || "html");
+    return ctx => {
+        ctx.editor.innerHTML = highlightStr(ctx.getCode(), language || "html");
     };
 };
