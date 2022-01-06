@@ -2,49 +2,118 @@
     <head>
         <meta charset="utf-8">
         <title>CodeCake: tiny code editor for the web</title>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap">
         <link rel="stylesheet" href="./codecake.css">
         <style>
             * {
                 box-sizing: border-box;
             }
             body {
-                background: #F6F8F8;
+                background: #f6f8f8;
                 margin: 0px;
                 padding: 0px;
+                font-family: 'Lato', sans-serif;
+                font-size: 16px;
             }
-            .wrapper {
-                background-color: #ffffff;
+            .main {
+                margin: 24px auto;
+                max-width: 960px;
+                width: 100%;
+            }
+            .main .controls {
+                display: flex;
+                margin-bottom: 8px;
+            }
+            .main .controls .option {
+                margin-right: 16px;
+            }
+            .main .controls .option .status {
+                cursor: pointer;
+                font-weight: bold;
+            }
+            .main .CodeCake {
                 border-radius: 8px;
                 box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2);
-                height: 500px;
-                margin: 48px;
-                padding: 24px;
+                height: 100%;
+                max-height: 400px;
             }
         </style>
     </head>
     <body>
-        <div id="editor" class="CodeCake CodeCake-light wrapper"></div>
+        <!-- Editor example -->
+        <div class="main">
+            <div class="controls">
+                <div class="option">
+                    Theme: <span id="switch-theme" class="status">dark</span>
+                </div>
+                <div class="option">
+                    Highlight: <span data-option="highlight" class="status switch">ON</span>
+                </div>
+                <div class="option">
+                    Line Numbers: <span data-option="linenumbers" class="status switch">ON</span>
+                </div>
+                <div class="option">
+                    Read only: <span data-option="readonly" class="status switch">OFF</span>
+                </div>
+            </div>
+            <div id="editor" class="CodeCake CodeCake-dark"></div>
+        </div>
+        <!-- Editor code -->
         <script type="module">
             import {CodeCake} from "./codecake.js";
             import {highlight} from "./highlight.js";
             import {lineNumbers} from './linenumbers.js'
     
             const parent = document.getElementById("editor");
-            const cake = CodeCake(parent, {
-                // "className": "editor",
-            });
+            const options = {
+                highlight: true,
+                linenumbers: true,
+                readonly: false,
+            };
+            const reloadEditor = () => {
+                // Remove parent childs
+                while(parent.firstChild) {
+                    parent.removeChild(parent.firstChild);
+                }
 
-            // Core plugins
-            cake.addPlugin(highlight("js"));
-            cake.addPlugin(lineNumbers({}));
+                // Initialize cake editor
+                const cake = CodeCake(parent, {
+                    "readonly": options.readonly,
+                });
+    
+                // Core plugins
+                options.highlight && cake.addPlugin(highlight("html"));
+                options.linenumbers && cake.addPlugin(lineNumbers());
   
-            // Custom plugin to save content in localStorage
-            cake.addPlugin(editor => {
-                return localStorage.setItem("code", editor.textContent);
+                // Custom plugin to save content in localStorage
+                cake.addPlugin(ctx => {
+                    return localStorage.setItem("code", ctx.getCode());
+                });
+
+                // Restore previous code
+                cake.setCode(localStorage.getItem("code") || "");
+            };
+
+            // Theme event listener
+            document.querySelector("span#switch-theme").addEventListener("click", event => {
+                event.target.textContent = event.target.textContent === "dark" ? "light" : "dark";
+                parent.classList.toggle("CodeCake-light");
+                parent.classList.toggle("CodeCake-dark");
             });
 
-            // Restore previous code
-            cake.update(localStorage.getItem("code") || "");
+            // Options switch
+            Array.from(document.querySelectorAll("span.status.switch")).forEach(el => {
+                return el.addEventListener("click", event => {
+                    const option = event.target.dataset.option;
+                    options[option] = !options[option]; // Toggle option value
+                    event.target.textContent = event.target.textContent === "ON" ? "OFF" : "ON";
+
+                    return reloadEditor();
+                });
+            });
+
+            // Init editor
+            reloadEditor();
         </script>
     </body>
 </html>
