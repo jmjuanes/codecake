@@ -52,6 +52,7 @@ const regexp = {
     "keyword": /[\w\-@]/,
     "number": /[\d\.]/,
     "punctuation": /^[{}[\](\):;\\.,]/,
+    "property": /^([\w\d\.\-\_]+)\ *\:/,
     "operator": /^[?!&@~\/\-+*%=<>|]/,
     "function": /^([a-zA-Z][\w]*)\ *\(/,
     "htmlTag": /^[\w\d\-\_]/,
@@ -62,7 +63,6 @@ const regexp = {
     "cssKeyword": new RegExp(`^(${cssKeywords.join("|")})`, ""),
     "cssConstant": new RegExp(`^(${cssConstants.join("|")})[^\w]`, ""),
     "cssSelector": /^\.([\w\d\-\_]+)/,
-    "cssProperty": /^([\w\d\.\-\_]+)\ *\:/,
     "cssUnit": /^(cm|mm|in|px|pt|pc|em|rem|vw|vh)/,
     "cssColor": /^#([\da-f]{3}){1,2}/,
     "doubleQuote": /[\"]/,
@@ -176,6 +176,7 @@ const getNextToken = ctx => {
         else if (regexp.punctuation.test(c)) { return createToken(2); } //Punctuation token
         else if (regexp.operator.test(c)) { return createToken(1); } //Operator token
         else if (regexp.number.test(c)) { return createToken(6); } //Number
+        else if (regexp.property.test(ctx.code)) { return createToken(10); } // JSON property
         else if (regexp.jsConstant.test(ctx.code)) { return createToken(4); } //Language constant
         else if (regexp.jsKeyword.test(ctx.code)) { return createToken(3); } //Keyword
         else if (regexp.function.test(ctx.code)) { return createToken(12); } // Function
@@ -193,7 +194,7 @@ const getNextToken = ctx => {
             return createToken(7); // CSS Attribute
         }
         else if (ctx.mode !== "block" && regexp.cssSelector.test(ctx.code)) { return createToken(9); } // CSS attribute
-        else if (regexp.cssProperty.test(ctx.code)) { return createToken(10); } // CSS property
+        else if (regexp.property.test(ctx.code)) { return createToken(10); } // CSS property
         else if (regexp.cssUnit.test(ctx.code)) { return createToken(11); } // CSS Unit
         else if (regexp.function.test(ctx.code)) { return createToken(12); } // Function
         else if (regexp.punctuation.test(c)) { return createToken(2); } //Punctuation token
@@ -287,6 +288,7 @@ export const highlightStr = (value, language) => {
 // Highlight plugin for CodeCake
 export const highlight = language => {
     return ctx => {
-        ctx.editor.innerHTML = highlightStr(ctx.getCode(), language || "html");
+        ctx.language = language || "html";
+        ctx.editor.innerHTML = highlightStr(ctx.getCode(), ctx.language);
     };
 };
