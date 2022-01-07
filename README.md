@@ -42,20 +42,27 @@ The first argument of the `CodeCake` function is the reference to the `<div>` el
 - `tabSize`: number of spaces for a tab. Default is `4`.
 - `className`: custom classname to customize the editing area.
 
+The `CodeCake` function will return an object with some methods that you can use to manipulate the editor.
 
-## API
+Use `cake.getCode()` to get the current code in the editor.
 
-### cake.getCode()
+```javascript
+const code = cake.getCode();
+```
 
-Returns the current code of the editor.
+Use `cake.setCode(newCode)` to update the code displayed in the editor.
 
-### cake.setCode(newCode)
+```javascript
+cake.setCode("Hello world");
+```
 
-Updates the code of the editor.
+Use `cake.addPlugin` to register a new plugin. For example, you can create your own simple plugin to higlight the code using [PrismJS](https://prismjs.com/):
 
-### cake.addPlugin(fn)
-
-Registers a new plugin to the editor.
+```javascript
+cake.addPlugin(({editor}) => {
+    Prism.highlightElement(editor);
+});
+```
 
 ## Line numbers 
 
@@ -76,14 +83,6 @@ We also provide a tiny highlight plugin that you can use to highlight the text i
 import {highlight} from "https://unpkg.com/codecake/highlight.js";
 
 cake.addPlugin(highlight("html"));
-```
-
-You can use other highlight modules like [highlight.js](https://highlightjs.org/) or [PrismJS](https://prismjs.com/):
-
-```javascript
-cake.addPlugin(({editor}) => {
-    Prism.highlightElement(editor);
-});
 ```
 
 ## Themes
