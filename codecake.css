@@ -2,7 +2,7 @@
 .CodeCake {
     font-family: "Source Code Pro", monospace;
     letter-spacing: normal;
-    padding: 24px;
+    padding: 20px;
 }
 .CodeCake-editor {
     font-size: 14px;
@@ -92,6 +92,9 @@
 }
 .CodeCake-dark .CodeCake-lines {
     color: #757ca3;
+}
+.CodeCake-dark .CodeCake-status {
+    background-color: #131520;
 }
 
 .CodeCake-dark .token-attribute,
