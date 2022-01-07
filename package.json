@@ -1,0 +1,19 @@
+{
+    "name": "codecake",
+    "version": "0.0.1-dev",
+    "description": "Tiny code editor for the web",
+    "repository": "https://github.com/jmjuanes/codecake.git",
+    "author": "Josemi Juanes <josemijuanes@gmail.com>",
+    "bugs": "https://github.com/jmjuanes/codecake/issues",
+    "main": "codecake.js",
+    "module": "codecake.js",
+    "files": [
+        "README.md",
+        "LICENSE",
+        "codecake.css",
+        "codecake.js",
+        "highlight.js",
+        "linenumbers.js"
+    ],
+    "license": "MIT"
+}
