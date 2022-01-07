@@ -36,21 +36,18 @@ const getTextNodeAtPosition = (root, index) => {
 //Code editor component
 export const CodeCake = (parent, options) => {
     options = options || {};
-    const tabSize = options.tabSize || 4;
     const plugins = []; // List of available plugins
     let prevCode = ""; // Previous code
     const ctx = {
-        tab: " ".repeat(tabSize),
+        tab: " ".repeat(options.tabSize || 4),
         readonly: !!options.readonly,
         focus: false,
         position: null, // Current position
         editor: document.createElement("div"), // Editor referente
-        keydownEvents: [],
-        keyupEvents: [],
     };
 
     // Create editor element and apply attributes and styles
-    !options.readonly && ctx.editor.setAttribute("contenteditable", "plaintext-only");
+    !ctx.readonly && ctx.editor.setAttribute("contenteditable", "plaintext-only");
     ctx.editor.setAttribute("spellcheck", options.spellcheck ? "true" : "false");
     ctx.editor.classList.add("CodeCake-editor");
     options.className && ctx.editor.classList.add(options.className); // Apply custom css
@@ -65,7 +62,7 @@ export const CodeCake = (parent, options) => {
     parent.appendChild(ctx.editor);
 
     // Check if plainText is not supported
-    if (!options.readonly && ctx.editor.contentEditable !== "plaintext-only") {
+    if (!ctx.readonly && ctx.editor.contentEditable !== "plaintext-only") {
         ctx.editor.setAttribute("contenteditable", "true");
     }
 
@@ -75,6 +72,7 @@ export const CodeCake = (parent, options) => {
         ctx.editor.textContent = newCode;
         debouncePluginsCall(wait || 50);
     };
+
     // Get code before current caret position
     ctx.getCodeBefore = () => {
         const {startContainer, startOffset} = getCurrentSelection().getRangeAt(0);
@@ -88,7 +86,7 @@ export const CodeCake = (parent, options) => {
     ctx.savePosition = () => {
         const selection = getCurrentSelection();
         const range = selection.getRangeAt(0);
-        range.setStart(parent, 0);
+        range.setStart(ctx.editor, 0);
         return range.toString().length;
     };
 
@@ -117,21 +115,18 @@ export const CodeCake = (parent, options) => {
         }
         const pos = ctx.savePosition();
         const text = ctx.getCode();
-        const textBefore = text.slice(0, pos);
-        //Split the current text by \n and get the last line
-        const lines = textBefore.split("\n");
+        const lines = text.slice(0, pos).split("\n");
         const line = lines[lines.length - 1] || ""; 
         //Check for not only space characters or empty line
-        if (line.trim() !== "" || line === "") {
+        if (line === "" || line.trim() !== "") {
             return ctx.restorePosition(pos); // --> do nothing
         }
         //Prevent default --> we will remove up to a tab
         event.preventDefault();
-        const removeChars = (line.length % tabSize === 0) ? tabSize : line.length % tabSize;
+        const removeChars = (line.length % ctx.tab.length === 0) ? ctx.tab.length : line.length % ctx.tab.length;
         ctx.setCode(text.substring(0, pos - removeChars) + text.substring(pos, text.length), 1);
         prevCode = ctx.getCode(); // Prevent calling plugins twice
-        // Restore cursor position
-        ctx.restorePosition(pos - removeChars);
+        ctx.restorePosition(pos - removeChars); // Restore cursor position
     };
 
     // Handle new line character inserted
@@ -139,14 +134,13 @@ export const CodeCake = (parent, options) => {
         event.preventDefault();
         const lines = ctx.getCodeBefore().split("\n");
         const lastLine = lines[lines.length - 1];
-        // Get the lst indentation and the last character
         const lastIndentation = /^([\s]*)/.exec(lastLine);
-        const lastChar = lastLine.trim().slice(-1);
         // Check for no last indentation character
         if (lastIndentation === null || typeof lastIndentation[0] !== "string") {
             return insertText("\n"); // <--- Add new line without indentation
         }
-        const indentation = /[\[\{]]/.test(lastChar) ? lastIndentation[0] + ctx.tab : lastIndentation[0];
+        const lastChar = lastLine.trim().slice(-1);
+        const indentation = /[\[\{]/.test(lastChar) ? lastIndentation[0] + ctx.tab : lastIndentation[0];
         return insertText("\n" + indentation);
     };
 
@@ -159,7 +153,6 @@ export const CodeCake = (parent, options) => {
 
     // Register key down --> parse inserted key
     ctx.editor.addEventListener("keydown", event => {
-        ctx.keydownEvents.forEach(fn => fn(event));
         if (!event.defaultPrevented && !ctx.editor.readonly) {
             prevCode = ctx.getCode(); // Save current code
             if (event.keyCode === 13) { return handleNewLine(event); }
@@ -170,7 +163,6 @@ export const CodeCake = (parent, options) => {
 
     // Register key up listener
     ctx.editor.addEventListener("keyup", event => {
-        ctx.keyupEvents.forEach(fn => fn(event));
         if (!event.defaultPrevented && !ctx.readonly && prevCode !== ctx.getCode()) {
             return debouncePluginsCall(250);
         }
@@ -186,7 +178,7 @@ export const CodeCake = (parent, options) => {
         "setCode": c => ctx.setCode(c),
         "addPlugin": p => {
             plugins.push(p);
-            debouncePluginsCall();
+            debouncePluginsCall(50);
         },
         "clear": () => ctx.setCode(""),
     };
