@@ -25,7 +25,7 @@ export const lineNumbers = options => {
             ctx.editor.style.flexGrow = "1"; // Expand to all available space
             ctx.editor.parentNode.insertBefore(container, ctx.editor);
             ctx.editor.addEventListener("scroll", () => {
-                ctx.lines.style.top = `-${ctx.editor.scrollTop}`;
+                ctx.lines.style.top = `-${ctx.editor.scrollTop}px`;
             });
         }
 
