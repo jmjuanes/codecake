@@ -18,6 +18,7 @@
 /* Editor scrollbar */
 .CodeCake-editor::-webkit-scrollbar {
     width: 8px;
+    height: 8px;
 }
 .CodeCake-editor::-webkit-scrollbar-track {
     background-color: transparent;
@@ -27,6 +28,9 @@
 }
 .CodeCake-editor::-webkit-scrollbar-button {
     display: none;
+}
+.CodeCake-editor::-webkit-scrollbar-corner {
+    background-color: transparent;
 }
 
 /* CodeCake light theme */
