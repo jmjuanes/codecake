@@ -54,7 +54,7 @@ export const CodeCake = (parent, options) => {
     ctx.editor.style.outline = "none";
     ctx.editor.style.overflowWrap = "break-word";
     ctx.editor.style.overflow = "auto";
-    ctx.editor.style.whiteSpace = "nowrap"; // "pre-wrap";
+    ctx.editor.style.whiteSpace = "pre"; // "pre-wrap";
     ctx.editor.style.height = "100%";
     ctx.editor.style.width = "100%";
 
