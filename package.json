@@ -1,6 +1,6 @@
 {
     "name": "codecake",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "Tiny code editor for the web",
     "repository": "https://github.com/jmjuanes/codecake.git",
     "author": "Josemi Juanes <josemijuanes@gmail.com>",
@@ -15,9 +15,5 @@
         "highlight.js",
         "linenumbers.js"
     ],
-    "scripts": {
-        "build": "echo 'No build implemented'",
-        "test": "echo 'No tests implemented'"
-    },
     "license": "MIT"
 }
