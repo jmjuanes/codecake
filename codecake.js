@@ -52,9 +52,10 @@ export const CodeCake = (parent, options) => {
     ctx.editor.classList.add("CodeCake-editor");
     options.className && ctx.editor.classList.add(options.className); // Apply custom css
     ctx.editor.style.outline = "none";
-    ctx.editor.style.overflowWrap = "break-word";
+    ctx.editor.style.overflowWrap = "normal"; // "break-word";
     ctx.editor.style.overflow = "auto";
     ctx.editor.style.whiteSpace = "pre"; // "pre-wrap";
+    ctx.editor.style.wordWrap = "normal";
     ctx.editor.style.height = "100%";
     ctx.editor.style.width = "100%";
 
