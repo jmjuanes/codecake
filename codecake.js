@@ -6,7 +6,7 @@ const escape = text => {
 const insertText = text => {
     const sel = window.getSelection();
     const range = sel.getRangeAt(0);
-    const textElement = document.createTextNode(text);
+    const textElement = document.createTextNode(escape(text));
     range.insertNode(textElement);
     range.setStartAfter(textElement);
     sel.removeAllRanges();
