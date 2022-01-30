@@ -1,13 +1,17 @@
-// Get current selection
-const getCurrentSelection = () => window.getSelection();
-
 // Escape HTML characters from the given input
 const escape = text => {
     return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 };
 
-// Insert text
-const insertText = text => document.execCommand("insertHTML", false, escape(text));
+const insertText = text => {
+    const sel = window.getSelection();
+    const range = sel.getRangeAt(0);
+    const textElement = document.createTextNode(text);
+    range.insertNode(textElement);
+    range.setStartAfter(textElement);
+    sel.removeAllRanges();
+    sel.addRange(range);
+};
 
 // Tiny debounce implementation
 const debounce = fn => {
@@ -76,7 +80,7 @@ export const CodeCake = (parent, options) => {
 
     // Get code before current caret position
     ctx.getCodeBefore = () => {
-        const {startContainer, startOffset} = getCurrentSelection().getRangeAt(0);
+        const {startContainer, startOffset} = window.getSelection().getRangeAt(0);
         const range = document.createRange();
         range.selectNodeContents(ctx.editor);
         range.setEnd(startContainer, startOffset);
@@ -85,7 +89,7 @@ export const CodeCake = (parent, options) => {
 
     // Save current position
     ctx.savePosition = () => {
-        const selection = getCurrentSelection();
+        const selection = window.getSelection();
         const range = selection.getRangeAt(0);
         range.setStart(ctx.editor, 0);
         return range.toString().length;
@@ -93,7 +97,7 @@ export const CodeCake = (parent, options) => {
 
     // Restore a position
     ctx.restorePosition = index => {
-        const selection = getCurrentSelection();
+        const selection = window.getSelection();
         const pos = getTextNodeAtPosition(ctx.editor, index);
         selection.removeAllRanges();
         const range = new Range();
@@ -110,7 +114,7 @@ export const CodeCake = (parent, options) => {
 
     //Handle backspace down
     const handleBackspace = event => {
-        const selection = getCurrentSelection();
+        const selection = window.getSelection();
         if (selection.type !== "Caret") {
             return; // --> do nothing
         }
