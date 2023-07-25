@@ -7,7 +7,14 @@
 .CodeCake-editor {
     font-size: 14px;
     font-weight: 400;
+    height: 100%;
     line-height: 20px;
+    overflow: auto;
+    overflow-wrap: normal;
+    outline: none;
+    width: 100%;
+    white-space: pre; /* pre-wrap */
+    word-wrap: normal;
 }
 .CodeCake-lines {
     font-size: 12px;
