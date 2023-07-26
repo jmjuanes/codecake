@@ -1,15 +1,7 @@
-const escape = text => {
-    return text.replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-};
-
 const insertText = text => {
     const sel = window.getSelection();
     const range = sel.getRangeAt(0);
-    const textElement = document.createTextNode(escape(text));
+    const textElement = document.createTextNode(text);
     range.insertNode(textElement);
     range.setStartAfter(textElement);
     sel.removeAllRanges();
@@ -38,32 +30,45 @@ const getTextNodeAtPosition = (root, index) => {
     };
 };
 
+const getEditorTemplate = () => {
+    const templateContent = [
+        `<div class="codecake">`,
+        `    <div class="codecake-gutters" style="display:none;">`,
+        `        <div class="codecake-gutter codecake-lines" style="display:none;"></div>`,
+        `    </div>`,
+        `    <div class="codecake-editor" spellcheck="false" autocorrect="off"></div>`, 
+        `</div>`,
+    ];
+    const templateElement = document.createElement("template");
+    templateElement.innerHTML = templateContent.join("").trim();
+    return templateElement.content.firstChild;
+};
+
 //Code editor component
-export const CodeCake = (options = {}) => {
-    let prevCode = ""; // Previous code
+export const CodeCake = (parent, options = {}) => {
+    let prevCode = "";
     let focus = false;
-    const parent = options?.parent || document.createElement("div");
-    const editor = document.createElement("div");
-    const tab = " ".repeat(options.tabSize || 4);
-    const readonly = !!options?.readonly;
+    let linesCount = -1;
+    const tab = options?.indentation === "tabs" ? "\t" : " ".repeat(options.tabSize || 4);
+    const endl = String.fromCharCode(10);
+    parent.appendChild(getEditorTemplate());
+    const editor = parent.querySelector(".codecake-editor");
+    const lines = parent.querySelector(".codecake-lines");
 
     // Create editor element and apply attributes and styles
-    !readonly && editor.setAttribute("contenteditable", "plaintext-only");
-    editor.setAttribute("spellcheck", options.spellcheck ? "true" : "false");
-    editor.classList.add("CodeCake-editor");
-    options?.className && editor.classList.add(options.className); // Apply custom css
-
-    // Append editor to parent
-    parent.appendChild(editor);
+    parent.querySelector(".codecake").classList.add(`codecake-${options.theme || "light"}`);
+    !options?.readonly && editor.setAttribute("contenteditable", "plaintext-only");
+    options?.linenumbers && (parent.querySelector(".codecake-gutters").style.display = "");
+    options?.linenumbers && (lines.style.display = "");
 
     // Check if plainText is not supported
-    if (!readonly && editor.contentEditable !== "plaintext-only") {
+    if (!options?.readonly && editor.contentEditable !== "plaintext-only") {
         editor.setAttribute("contenteditable", "true");
     }
     // Manage code
     const setCode = (newCode, wait) => {
         editor.textContent = newCode;
-        debounceUpdate(wait || 50);
+        update(wait ?? 50);
     };
     const getCode = () => editor.textContent || "";
     const getCodeBefore = () => {
@@ -75,8 +80,7 @@ export const CodeCake = (options = {}) => {
     };
     // Position managers
     const savePosition = () => {
-        const selection = window.getSelection();
-        const range = selection.getRangeAt(0);
+        const range = window.getSelection().getRangeAt(0);
         range.setStart(editor, 0);
         return range.toString().length;
     };
@@ -89,84 +93,86 @@ export const CodeCake = (options = {}) => {
         selection.addRange(range);
     };
     // Debounce code update
-    const debounceUpdate = debounce(() => {
+    const update = debounce(() => {
         const position = focus && savePosition();
-        const currentCode = getCode();
+        let currentCode = getCode();
+        if (!currentCode.endsWith(endl)) {
+            currentCode = currentCode + endl;
+            editor.textContent = currentCode;
+        }
+        // Update line numbers
+        if (options.linenumbers) {
+            const count = Math.max(currentCode.split(endl).length - 1, 1);
+            if (linesCount !== count) {
+                lines.innerText = Array.from({length: count}, (v, i) => i + 1).join("\n");
+                linesCount = count;
+            }
+        }
+        // Update highlight
+        if (typeof options.highlight === "function") {
+            editor.innerHTML = options.highlight(currentCode);
+        }
         options?.onChange && options.onChange(currentCode);
         focus && restorePosition(position);
     });
 
-    //Handle backspace down
-    const handleBackspace = event => {
-        const selection = window.getSelection();
-        if (selection.type !== "Caret") {
-            return; // --> do nothing
-        }
-        const pos = savePosition();
-        const text = getCode();
-        const lines = text.slice(0, pos).split("\n");
-        const line = lines[lines.length - 1] || ""; 
-        //Check for not only space characters or empty line
-        if (line === "" || line.trim() !== "") {
-            return restorePosition(pos); // --> do nothing
-        }
-        //Prevent default --> we will remove up to a tab
-        event.preventDefault();
-        const removeChars = (line.length % tab.length === 0) ? tab.length : line.length % tab.length;
-        setCode(text.substring(0, pos - removeChars) + text.substring(pos, text.length), 1);
-        prevCode = getCode(); // Prevent calling plugins twice
-        restorePosition(pos - removeChars); // Restore cursor position
-    };
-
-    // Handle new line character inserted
-    const handleNewLine = event => {
-        event.preventDefault();
-        const lines = getCodeBefore().split("\n");
-        const lastLine = lines[lines.length - 1];
-        const lastIndentation = /^([\s]*)/.exec(lastLine);
-        // Check for no last indentation character
-        if (lastIndentation === null || typeof lastIndentation[0] !== "string") {
-            return insertText("\n"); // <--- Add new line without indentation
-        }
-        const lastChar = lastLine.trim().slice(-1);
-        const indentation = /[\[\{]/.test(lastChar) ? lastIndentation[0] + tab : lastIndentation[0];
-        return insertText("\n" + indentation);
-    };
-
-    // Handle tab
-    // TODO: handle block indentation
-    const handleTab = event => {
-        event.preventDefault();
-        return event.shiftKey ? handleBackspace(event) : insertText(tab);
-    };
-
-    // Events listeners
-    const handleKeyDownEvent = event => {
-        if (!event.defaultPrevented && !readonly) {
-            prevCode = getCode(); // Save current code
-            if (event.keyCode === 13) { return handleNewLine(event); }
-            if (event.keyCode === 8) { return handleBackspace(event); }
-            if (event.keyCode === 9) { return handleTab(event); }
-        }
-    };
-    const handleKeyUpEvent = event => {
-        if (!event.defaultPrevented && !readonly && prevCode !== getCode()) {
-            debounceUpdate(250);
-        }
-    };
-    const handleFocusEvent = () => focus = true;
-    const handleBlurEvent = () => focus = false;
     // Register editor events listeners
-    editor.addEventListener("keydown", handleKeyDownEvent);
-    editor.addEventListener("keyup", handleKeyUpEvent);
-    editor.addEventListener("focus", handleFocusEvent);
-    editor.addEventListener("blur", handleBlurEvent);
+    editor.addEventListener("keydown", event => {
+        if (!event.defaultPrevented && !options?.readonly) {
+            prevCode = getCode();
+            // Handle inserting new line
+            if (event.key === "Enter") {
+                event.preventDefault();
+                const lines = getCodeBefore().split(endl);
+                const lastLine = lines[lines.length - 1];
+                const lastIndentation = (/^([\s]*)/.exec(lastLine))?.[0] || "";
+                const lastChar = lastLine.trim().slice(-1);
+                const indentation = lastIndentation + (/[\[\{]/.test(lastChar) ? tab : "");
+                insertText(endl + indentation);
+            }
+            // Handle backspace
+            else if (event.keyCode === 8 || (event.keyCode === 9 && event.shiftKey)) {
+                if (window.getSelection().type === "Caret") {
+                    let removeChars = 0;
+                    const pos = savePosition();
+                    const text = getCode();
+                    const lines = text.slice(0, pos).split(endl);
+                    const line = lines[lines.length - 1] || ""; 
+                    // Check for line not empty with space characters
+                    if (line !== "" && line.trim() === "") {
+                        event.preventDefault();
+                        removeChars = (line.length % tab.length === 0) ? tab.length : line.length % tab.length;
+                        setCode(text.substring(0, pos - removeChars) + text.substring(pos, text.length), 1);
+                        prevCode = getCode();
+                    }
+                    // Restore cursor position
+                    restorePosition(pos - removeChars);
+                }
+            }
+            // Handle insert tab
+            else if (event.keyCode === 9 && !event.shiftKey) {
+                event.preventDefault();
+                insertText(tab);
+            }
+        }
+    });
+    editor.addEventListener("keyup", event => {
+        if (!event.defaultPrevented && !options?.readonly && prevCode !== getCode()) {
+            return update(250);
+        }
+    });
+    editor.addEventListener("focus", () => focus = true);
+    editor.addEventListener("blur", () => focus = false);
+    editor.addEventListener("scroll", () => lines.style.top = `-${editor.scrollTop}px`);
+    editor.addEventListener("paste", () => update(10));
+
+    // Initialize editor values
+    options?.initialCode ? setCode(options?.initialCode) : update(1);
 
     // Return editor actions
     return {
-        parent: parent,
-        getCode: getCode,
-        setCode: setCode,
-        clearCode: () => setCode(""),
+        get: () => getCode(),
+        set: code => setCode(code || "", 1),
+        clear: () => setCode(""),
     };
 };
