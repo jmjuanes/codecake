@@ -62,16 +62,16 @@
                     Read only: <span data-option="readonly" class="status switch">OFF</span>
                 </div>
             </div>
-            <div id="editor" class="CodeCake CodeCake-dark"></div>
+            <div id="editor" class=""></div>
         </div>
         <!-- Editor code -->
         <script type="module">
             import {CodeCake} from "./codecake.js";
-            import {highlight} from "./highlight.js";
-            import {lineNumbers} from "./linenumbers.js";
+            import {highlightStr} from "./highlight.js";
     
             const parent = document.getElementById("editor");
             const options = {
+                theme: "dark",
                 highlight: true,
                 linenumbers: true,
                 readonly: false,
@@ -83,28 +83,24 @@
                 }
 
                 // Initialize cake editor
-                const cake = CodeCake(parent, {
-                    "readonly": options.readonly,
+                CodeCake(parent, {
+                    initialCode: localStorage.getItem("code") || "",
+                    theme: options.theme,
+                    // indentation: "tabs",
+                    readonly: options.readonly,
+                    linenumbers: options.linenumbers,
+                    highlight: options.highlight && (code => highlightStr(code, "js")),
+                    onChange: code => {
+                        localStorage.setItem("code", code);
+                    },
                 });
-    
-                // Core plugins
-                options.highlight && cake.addPlugin(highlight("html"));
-                options.linenumbers && cake.addPlugin(lineNumbers());
-  
-                // Custom plugin to save content in localStorage
-                cake.addPlugin(ctx => {
-                    return localStorage.setItem("code", ctx.getCode());
-                });
-
-                // Restore previous code
-                cake.setCode(localStorage.getItem("code") || "");
             };
 
             // Theme event listener
             document.querySelector("span#switch-theme").addEventListener("click", event => {
                 event.target.textContent = event.target.textContent === "dark" ? "light" : "dark";
-                parent.classList.toggle("CodeCake-light");
-                parent.classList.toggle("CodeCake-dark");
+                options.theme = event.target.textContent;
+                reloadEditor();
             });
 
             // Options switch

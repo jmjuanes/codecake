@@ -12,8 +12,7 @@
         "LICENSE",
         "codecake.css",
         "codecake.js",
-        "highlight.js",
-        "linenumbers.js"
+        "highlight.js"
     ],
     "license": "MIT"
 }
