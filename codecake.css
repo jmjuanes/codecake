@@ -1,10 +1,13 @@
-/* CodeCake global styles */
-.CodeCake {
+/* codecake global styles */
+.codecake {
+    display: flex;
     font-family: "Source Code Pro", monospace;
     letter-spacing: normal;
     padding: 20px;
+    width: 100%;
 }
-.CodeCake-editor {
+.codecake-editor {
+    flex-grow: 1;
     font-size: 14px;
     font-weight: 400;
     height: 100%;
@@ -16,130 +19,142 @@
     white-space: pre; /* pre-wrap */
     word-wrap: normal;
 }
-.CodeCake-lines {
+.codecake-gutters {
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    width: 48px;
+}
+.codecake-lines {
+    bottom: 0px;
     font-size: 12px;
     line-height: 20px;
+    overflow: hidden;
+    padding-right: 16px;
+    position: absolute;
+    right: 0px;
     text-align: right;
+    top: 0px;
 }
 
 /* Editor scrollbar */
-.CodeCake-editor::-webkit-scrollbar {
+.codecake-editor::-webkit-scrollbar {
     width: 8px;
     height: 8px;
 }
-.CodeCake-editor::-webkit-scrollbar-track {
+.codecake-editor::-webkit-scrollbar-track {
     background-color: transparent;
 }
-.CodeCake-editor::-webkit-scrollbar-thumb {
+.codecake-editor::-webkit-scrollbar-thumb {
     border-radius: 16px;
 }
-.CodeCake-editor::-webkit-scrollbar-button {
+.codecake-editor::-webkit-scrollbar-button {
     display: none;
 }
-.CodeCake-editor::-webkit-scrollbar-corner {
+.codecake-editor::-webkit-scrollbar-corner {
     background-color: transparent;
 }
 
-/* CodeCake light theme */
-.CodeCake-light {
+/* codecake light theme */
+.codecake-light {
     background-color: #ffffff;
 }
-.CodeCake-light .CodeCake-editor {
+.codecake-light .codecake-editor {
     color: #000000;
 }
-.CodeCake-light .CodeCake-editor::-webkit-scrollbar-thumb {
+.codecake-light .codecake-editor::-webkit-scrollbar-thumb {
     background-color: #dedfe3;
 }
-.CodeCake-light .CodeCake-editor::-webkit-scrollbar-thumb:hover {
+.codecake-light .codecake-editor::-webkit-scrollbar-thumb:hover {
     background-color: #cbccd2;
 }
-.CodeCake-light .CodeCake-lines {
+.codecake-light .codecake-lines {
     /* color: #6cb1c5; */
     color: #878a98;
 }
 
-.CodeCake-light .token-operator, 
-.CodeCake-light .token-number,
-.CodeCake-light .token-unit {
+.codecake-light .token-operator, 
+.codecake-light .token-number,
+.codecake-light .token-unit {
     color: #e57697;
 }
-.CodeCake-light .token-punctuation, 
-.CodeCake-light .token-property {
+.codecake-light .token-punctuation, 
+.codecake-light .token-property {
     color: #3a464e;
 }
-.CodeCake-light .token-keyword {
+.codecake-light .token-keyword {
     color: #b351d9;
 }
-.CodeCake-light .token-constant {
+.codecake-light .token-constant {
     color: #20118a;
 }
-.CodeCake-light .token-tag,
-.CodeCake-light .token-function {
+.codecake-light .token-tag,
+.codecake-light .token-function {
     color: #3a9ff2;
 }
-.CodeCake-light .token-attribute,
-.CodeCake-light .token-selector {
+.codecake-light .token-attribute,
+.codecake-light .token-selector {
     color: #f38d00;
 }
-.CodeCake-light .token-string {
+.codecake-light .token-string {
     color: #00a17d;
 }
-.CodeCake-light .token-comment {
+.codecake-light .token-comment {
     color: #969896;
 }
 
-/* CodeCake dark theme */
-.CodeCake-dark {
+/* codecake dark theme */
+.codecake-dark {
     background-color: #272b3f;
 }
-.CodeCake-dark .CodeCake-editor {
+.codecake-dark .codecake-editor {
     color: #aab2d4;
 }
-.CodeCake-dark .CodeCake-editor::-webkit-scrollbar-thumb {
+.codecake-dark .codecake-editor::-webkit-scrollbar-thumb {
     background-color: #99aaff15;
 }
-.CodeCake-dark .CodeCake-editor::-webkit-scrollbar-thumb:hover {
+.codecake-dark .codecake-editor::-webkit-scrollbar-thumb:hover {
     background-color: #99aaff22;
 }
-.CodeCake-dark .CodeCake-lines {
+.codecake-dark .codecake-lines {
     color: #757ca3;
 }
-.CodeCake-dark .CodeCake-status {
+.codecake-dark .codecake-status {
     background-color: #131520;
 }
 
-.CodeCake-dark .token-attribute,
-.CodeCake-dark .token-selector {
+.codecake-dark .token-attribute,
+.codecake-dark .token-selector {
     color: #80d0ff;
 }
-.CodeCake-dark .token-comment {
+.codecake-dark .token-comment {
     color: #58628d;
 }
-.CodeCake-dark .token-constant, 
-.CodeCake-dark .token-number {
+.codecake-dark .token-constant, 
+.codecake-dark .token-number {
     color: #ffae80;
 }
-.CodeCake-dark .token-function {
+.codecake-dark .token-function {
     color: #22c1dd;
 } 
-.CodeCake-dark .token-tag {
+.codecake-dark .token-tag {
     color: #6e9af7;
 }
-.CodeCake-dark .token-keyword {
+.codecake-dark .token-keyword {
     color: #af89f5;
 }
-.CodeCake-dark .token-operator {
+.codecake-dark .token-operator {
     color: #ad388c;
 }
-.CodeCake-dark .token-property {
+.codecake-dark .token-property {
     color: #bdc7f5;
 }
-.CodeCake-dark .token-punctuation {
+.codecake-dark .token-punctuation {
     color: #8bb3f4;
 }
-.CodeCake-dark .token-string {
+.codecake-dark .token-string {
     color: #9bcd65;
 }
-.CodeCake-dark .token-unit {
+.codecake-dark .token-unit {
     color: #dd556e;
 }
