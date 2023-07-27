@@ -1,3 +1,7 @@
+/*
+ * CodeCake Editor
+*/
+
 const insertText = text => {
     const sel = window.getSelection();
     const range = sel.getRangeAt(0);
@@ -44,25 +48,23 @@ const getEditorTemplate = () => {
     return templateElement.content.firstChild;
 };
 
-//Code editor component
-export const CodeCake = (parent, options = {}) => {
+// Create a new instance of the code editor
+export const create = (parent, options = {}) => {
     let prevCode = "";
     let focus = false;
     let linesCount = -1;
-    const tab = options?.indentation === "tabs" ? "\t" : " ".repeat(options.tabSize || 4);
+    const listeners = {}; // Store events listeners
+    const tab = options?.indentWithTabs ? "\t" : " ".repeat(options.tabSize || 4);
     const endl = String.fromCharCode(10);
     parent.appendChild(getEditorTemplate());
     const editor = parent.querySelector(".codecake-editor");
     const lines = parent.querySelector(".codecake-lines");
-
-    // Create editor element and apply attributes and styles
-    parent.querySelector(".codecake").classList.add(`codecake-${options.theme || "light"}`);
-    !options?.readonly && editor.setAttribute("contenteditable", "plaintext-only");
-    options?.linenumbers && (parent.querySelector(".codecake-gutters").style.display = "");
-    options?.linenumbers && (lines.style.display = "");
-
-    // Check if plainText is not supported
-    if (!options?.readonly && editor.contentEditable !== "plaintext-only") {
+    !options?.readOnly && editor.setAttribute("contenteditable", "plaintext-only");
+    (options?.className || "").split(" ").forEach(cn => parent.querySelector(".codecake").classList.add(cn));
+    options?.lineNumbers && (parent.querySelector(".codecake-gutters").style.display = "");
+    options?.lineNumbers && (lines.style.display = "");
+    // 'plaintext-only' mode is not supported in Firefox
+    if (!options?.readOnly && editor.contentEditable !== "plaintext-only") {
         editor.setAttribute("contenteditable", "true");
     }
     // Manage code
@@ -101,24 +103,21 @@ export const CodeCake = (parent, options = {}) => {
             editor.textContent = currentCode;
         }
         // Update line numbers
-        if (options.linenumbers) {
+        if (options.lineNumbers) {
             const count = Math.max(currentCode.split(endl).length - 1, 1);
             if (linesCount !== count) {
                 lines.innerText = Array.from({length: count}, (v, i) => i + 1).join("\n");
                 linesCount = count;
             }
         }
-        // Update highlight
-        if (typeof options.highlight === "function") {
-            editor.innerHTML = options.highlight(currentCode);
-        }
-        options?.onChange && options.onChange(currentCode);
+        (typeof options.highlight === "function") && (editor.innerHTML = options.highlight(currentCode));
+        (typeof listeners["change"] === "function") && listeners["change"](currentCode);
         focus && restorePosition(position);
     });
-
     // Register editor events listeners
     editor.addEventListener("keydown", event => {
-        if (!event.defaultPrevented && !options?.readonly) {
+        (typeof listeners["keydown"] === "function") && (listeners["keydown"](event));
+        if (!event.defaultPrevented && !options?.readOnly) {
             prevCode = getCode();
             // Handle inserting new line
             if (event.key === "Enter") {
@@ -131,18 +130,17 @@ export const CodeCake = (parent, options = {}) => {
                 insertText(endl + indentation);
             }
             // Handle backspace
-            else if (event.keyCode === 8 || (event.keyCode === 9 && event.shiftKey)) {
+            else if (event.key === "Backspace" || (event.key === "Tab" && event.shiftKey)) {
                 if (window.getSelection().type === "Caret") {
                     let removeChars = 0;
                     const pos = savePosition();
-                    const text = getCode();
-                    const lines = text.slice(0, pos).split(endl);
+                    const lines = prevCode.slice(0, pos).split(endl);
                     const line = lines[lines.length - 1] || ""; 
                     // Check for line not empty with space characters
                     if (line !== "" && line.trim() === "") {
                         event.preventDefault();
                         removeChars = (line.length % tab.length === 0) ? tab.length : line.length % tab.length;
-                        setCode(text.substring(0, pos - removeChars) + text.substring(pos, text.length), 1);
+                        setCode(prevCode.substring(0, pos - removeChars) + prevCode.substring(pos, prevCode.length), 1);
                         prevCode = getCode();
                     }
                     // Restore cursor position
@@ -150,14 +148,15 @@ export const CodeCake = (parent, options = {}) => {
                 }
             }
             // Handle insert tab
-            else if (event.keyCode === 9 && !event.shiftKey) {
+            else if (event.key === "Tab" && !event.shiftKey) {
                 event.preventDefault();
                 insertText(tab);
             }
         }
     });
     editor.addEventListener("keyup", event => {
-        if (!event.defaultPrevented && !options?.readonly && prevCode !== getCode()) {
+        (typeof listeners["keyup"] === "function") && (listeners["keyup"](event));
+        if (!event.defaultPrevented && !options?.readOnly && prevCode !== getCode()) {
             return update(250);
         }
     });
@@ -167,12 +166,177 @@ export const CodeCake = (parent, options = {}) => {
     editor.addEventListener("paste", () => update(10));
 
     // Initialize editor values
-    options?.initialCode ? setCode(options?.initialCode) : update(1);
+    options?.code ? setCode(options?.code) : update(1);
 
-    // Return editor actions
     return {
-        get: () => getCode(),
-        set: code => setCode(code || "", 1),
-        clear: () => setCode(""),
+        getCode: () => getCode(),
+        setCode: code => setCode(code || "", 1),
+        onChange: listener => (listeners["change"] = listener),
+        onKeyDown: listener => (listeners["keydown"] = listener),
+        onKeyUp: listener => (listeners["keyup"] = listener),
     };
+};
+
+
+/*
+ * CodeCake Syntax highlight
+*/
+
+const escape = text => {
+    return text.replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+};
+
+const jsKeywords = [
+    "async", "await", "break", "case", "catch", "class", "const", "continue", "constructor", "debugger", "default",
+    "delete", "do", "else", "export", "extends", "finally", "for", "from", "function", "if", "implements", "import",
+    "in", "instanceof", "let", "new", "of", "return", "static", "super", "switch", "symbol", "this", "throw",
+    "try", "typeof", "undefined", "var", "void", "while", "with", "yield",
+];
+
+const cssConstants = [
+    "absolute", "relative", "fixed", "sticky", "bold", "normal", "auto", "none", "solid", "dashed",
+    "sans-serif", "sans", "serif", "monospace", "red", "white", "black", "blue", "yellow", "green", "orange", "gray",
+];
+
+// Languajes definition
+const languages = {
+    html: {
+        aliases: [],
+        rules: [
+            {regex: /^(<!--.*-->)/, token: "comment"},
+            {
+                regex: /^(<([\w]+)(?![^>]*\/>)[^>]*>)/,
+                rules: [
+                    {
+                        regex: /^(<[\w]+)/,
+                        rules: [
+                            {regex: /^(<)/, token: "punctuation"},
+                            {regex: /^([\w]+)/, token: "tag"},
+                        ],
+                    },
+                    {
+                        regex: /^([\w\.\-\_]+="[^"]+")/,
+                        rules: [
+                            {regex: /^([\w\.\-\_]+)/, token: "attr"},
+                            {regex: /^(=)/, token: "punctuation"},
+                            {regex: /^("[^"]+")/, token: "string"},
+                        ],
+                    },
+                    {regex: /^(>)/, token: "punctuation"},
+                ],
+            },
+            {
+                regex: /^(<\/[\w]+>)/,
+                rules: [
+                    {regex: /^([<\/>])/, token: "punctuation"},
+                    {regex: /^([\w]+)/, token: "tag"},
+                ],
+            },
+        ],
+    },
+    javascript: {
+        aliases: ["js"],
+        rules: [
+            {regex: new RegExp("^(/\\*[^*]*\\*+(?:[^/*][^*]*\\*+)*/)|^(//[^\n]+)"), token: "comment"},
+            {regex: new RegExp(`^(\'.*\')|^(\".*\")|^(\`.*\`)`), token: "string"},
+            {regex: new RegExp(`^\\b(${jsKeywords.join("|")})\\b`), token: "keyword"},
+            {regex: /^\b(true|false|null)\b/, token: "constant"},
+            {regex: /^([+-]?([0-9]*[.])?[0-9]+)/, token: "number"},
+            {regex: /^([{}[\](\):;\\.,])/, token: "punctuation"},
+            {regex: /^([?!&@~\/\-+*%=<>|])/, token: "operator"},
+            {
+                regex: /^([a-zA-Z][\w]*\s*\()/,
+                rules: [
+                    {regex: /^([^\(]+)/, token: "title function"},
+                    {regex: /^(\()/, token: "punctuation"},
+                ],
+            },
+        ],
+    },
+    css: {
+        aliases: [],
+        rules: [
+            {regex: new RegExp("^(/\\*[^*]*\\*+(?:[^/*][^*]*\\*+)*/)"), token: "comment"},
+            {regex: /^([{},;])/, token: "punctuation"},
+            {regex: /^(@(font-face|import|keyframes))/, token: "keyword"},
+            {
+                regex: /^([a-z\-]+\s*:\s*[^;\n]+);/,
+                rules: [
+                    {
+                        regex: /^([a-z\-]+\s*:)/,
+                        rules: [
+                            {regex: /^([a-z\-]+)/, token: "attribute"},
+                            {regex: /^(:)/, token: "punctuation"},
+                        ],
+                    },
+                    {regex: /^(#[\da-f]{3,8})/, token: "constant"},
+                    {regex: /^([+-]?([0-9]*[.])?[0-9]+)/, token: "number"},
+                    {regex: new RegExp(`^(\'.*\')|^(\".*\")`), token: "string"},
+                    {regex: new RegExp(`^\\b(${cssConstants.join("|")})\\b`), token: "constant"},
+                    {regex: /^\b(cm|mm|in|px|pt|pc|em|rem|vw|vh)\b/, token: "unit"},
+                ],
+            },
+            {regex: /^(::?[a-z]+)/, token: "selector-pseudo"},
+            {regex: /^(\[[^\]]+\])/, token: "selector-attr"},
+            {regex: /^(\.[\w\-\_]+)/, token: "selector-class"},
+            {regex: /^(\#[\w\-\_]+)/, token: "selector-id"},
+            {regex: /^(body|html|a|div|table|td|tr|th|input|button|textarea|label|form|svg|g|path|rect|circle|ul|li|ol)\b/, token: "selector-tag"},
+            {regex: new RegExp(`^(\'.*\')|^(\".*\")`), token: "string"},
+        ],
+    },
+    markdown: {
+        aliases: ["md"],
+        rules: [
+            {regex: /^(#{1,6}[^\n]+)/, token: "section"},
+            {regex: /^(\`{3}[^\`{3}]+\`{3})/, token: "code"},
+            {regex: /^(\`[^\`\n]+\`)/, token: "code"},
+            {regex: /^\s*([\*\-+:]|\d+\.)\s/, token: "bullet"},
+            {regex: /^(\*{2}[^\*\n]+\*{2})/, token: "strong"},
+            {regex: /^(\*[^\*\n]+\*)/, token: "emphasis"},
+            {
+                regex: /^(!?\[[^\]\n]*]\([^\)\n]+\))/,
+                rules: [
+                    {
+                        regex: /^(\[.+\])/,
+                        rules: [
+                            {regex: /^([^\[\]]+)/, token: "string"},
+                        ],
+                    },
+                    {
+                        regex: /^(\(.+\))/,
+                        rules: [
+                            {regex: /^([^\(\)]+)/, token: "link"},
+                        ],
+                    }
+                ],
+            },
+            {regex: /^(\>\s[^\n]+)/, token: "quote"},
+        ],
+    },
+};
+
+const _highlight = (code, rules) => {
+    let text = "", i = 0;
+    while (i < code.length) {
+        const subCode = code.substr(i);
+        const rule = rules.find(rule => rule.regex.test(subCode));
+        if (rule) {
+            const match = subCode.match(rule.regex)[0];
+            text = text + (rule.rules ? _highlight(match, rule.rules) : `<span class="token-${rule.token}">${escape(match)}</span>`);
+            i = i + match.length;
+            continue;
+        }
+        text = text + escape(code[i]);
+        i = i + 1;
+    }
+    return text;
+};
+
+// Highlight the provided string
+export const highlight = (code, language = "javascript") => {
+    return _highlight(code, languages[language]?.rules || []);
 };

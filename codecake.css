@@ -3,6 +3,7 @@
     display: flex;
     font-family: "Source Code Pro", monospace;
     letter-spacing: normal;
+    min-height: 0;
     padding: 20px;
     width: 100%;
 }
@@ -20,15 +21,17 @@
     word-wrap: normal;
 }
 .codecake-gutters {
-    height: 100%;
+    min-height: 0;
     overflow: hidden;
     position: relative;
     width: 48px;
 }
 .codecake-lines {
     bottom: 0px;
+    color: currentColor;
     font-size: 12px;
     line-height: 20px;
+    opacity: 0.5;
     overflow: hidden;
     padding-right: 16px;
     position: absolute;
@@ -46,6 +49,7 @@
     background-color: transparent;
 }
 .codecake-editor::-webkit-scrollbar-thumb {
+    background-color: currentColor;
     border-radius: 16px;
 }
 .codecake-editor::-webkit-scrollbar-button {
@@ -57,10 +61,8 @@
 
 /* codecake light theme */
 .codecake-light {
-    background-color: #ffffff;
-}
-.codecake-light .codecake-editor {
-    color: #000000;
+    background-color: #fafafa;
+    color: #101623;
 }
 .codecake-light .codecake-editor::-webkit-scrollbar-thumb {
     background-color: #dedfe3;
@@ -79,21 +81,30 @@
     color: #e57697;
 }
 .codecake-light .token-punctuation, 
-.codecake-light .token-property {
+.codecake-light .token-property,
+.codecake-light .token-selector-pseudo,
+.codecake-light .token-selector-attr,
+.codecake-light .token-quote,
+.codecake-light .token-code {
     color: #3a464e;
 }
-.codecake-light .token-keyword {
+.codecake-light .token-keyword,
+.codecake-light .token-bullet {
     color: #b351d9;
 }
 .codecake-light .token-constant {
     color: #20118a;
 }
+.codecake-light .token-attribute,
 .codecake-light .token-tag,
-.codecake-light .token-function {
+.codecake-light .token-title.function,
+.codecake-light .token-selector-tag,
+.codecake-light .token-section {
     color: #3a9ff2;
 }
-.codecake-light .token-attribute,
-.codecake-light .token-selector {
+.codecake-light .token-attr,
+.codecake-light .token-selector-class,
+.codecake-light .token-link {
     color: #f38d00;
 }
 .codecake-light .token-string {
@@ -106,8 +117,6 @@
 /* codecake dark theme */
 .codecake-dark {
     background-color: #272b3f;
-}
-.codecake-dark .codecake-editor {
     color: #aab2d4;
 }
 .codecake-dark .codecake-editor::-webkit-scrollbar-thumb {
@@ -119,37 +128,45 @@
 .codecake-dark .codecake-lines {
     color: #757ca3;
 }
-.codecake-dark .codecake-status {
-    background-color: #131520;
-}
 
-.codecake-dark .token-attribute,
-.codecake-dark .token-selector {
+.codecake-dark .token-attr,
+.codecake-dark .token-selector-tag {
     color: #80d0ff;
 }
-.codecake-dark .token-comment {
+.codecake-dark .token-comment,
+.codecake-dark .token-quote {
     color: #58628d;
 }
 .codecake-dark .token-constant, 
-.codecake-dark .token-number {
+.codecake-dark .token-number,
+.codecake-dark .token-bullet,
+.codecake-dark .token-link {
     color: #ffae80;
 }
-.codecake-dark .token-function {
+.codecake-dark .token-title.function,
+.codecake-dark .token-section {
     color: #22c1dd;
 } 
-.codecake-dark .token-tag {
+.codecake-dark .token-attribute,
+.codecake-dark .token-tag,
+.codecake-dark .token-code,
+.codecake-dark .token-strong {
     color: #6e9af7;
 }
 .codecake-dark .token-keyword {
     color: #af89f5;
 }
-.codecake-dark .token-operator {
+.codecake-dark .token-operator,
+.codecake-dark .token-selector-attr {
     color: #ad388c;
 }
-.codecake-dark .token-property {
+.codecake-dark .token-property,
+.codecake-dark .token-selector-class {
     color: #bdc7f5;
 }
-.codecake-dark .token-punctuation {
+.codecake-dark .token-selector-pseudo,
+.codecake-dark .token-punctuation,
+.codecake-dark .token-emphasis {
     color: #8bb3f4;
 }
 .codecake-dark .token-string {
@@ -157,4 +174,14 @@
 }
 .codecake-dark .token-unit {
     color: #dd556e;
+}
+
+/* Common styles */
+.codecake-light .token-strong,
+.codecake-dark .token-strong {
+    font-weight: bold;
+}
+.codecake-light .token-emphasis,
+.codecake-dark .token-emphasis {
+    font-style: italic;
 }
