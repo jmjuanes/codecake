@@ -1,19 +1,31 @@
-name: "Generate a public release"
+name: Release
 on:
   push:
-    tags:
-      - "*"
+    tags: ['*']
 
 jobs:
-  npm-release:
-    name: "Publish in npm"
+  release:
+    name: Release
+    if: ${{ github.repository == 'jmjuanes/codecake' }}
+    runs-on: ubuntu-latest
+    ## Set permissions to the github token
+    ## https://github.com/softprops/action-gh-release#permissions 
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: softprops/action-gh-release@v1
+
+  publish:
+    name: Publish
+    if: ${{ github.repository == 'jmjuanes/codecake' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: "16.x"
-          registry-url: "https://registry.npmjs.org"
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
