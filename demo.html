@@ -1,0 +1,177 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
+        <title>CodeCake Demo</title>
+        <link rel="stylesheet" href="https://unpkg.com/lowcss/dist/low.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap">
+        <link rel="stylesheet" href="./codecake.css">
+    </head>
+    <body class="m-0 font-lato text-base leading-normal">
+        <!-- Editor example -->
+        <div class="main w-full h-full p-4 flex flex-col minh-0">
+            <div class="rounded-md bg-gray-200 px-4 py-2 flex flex-wrap mb-2 gap-4 select-none">
+                <div class="">
+                    Language: <span id="switch-language" class="cursor-pointer font-bold">javascript</span>
+                </div>
+                <div class="option">
+                    Theme: <span id="switch-theme" class="status cursor-pointer font-bold">dark</span>
+                </div>
+                <div class="option">
+                    Highlight: <span data-option="highlight" class="cursor-pointer font-bold">ON</span>
+                </div>
+                <div class="option">
+                    Line Numbers: <span data-option="linenumbers" class="cursor-pointer font-bold">ON</span>
+                </div>
+            </div>
+            <div id="editor" class="shadow-lg rounded-md overflow-hidden h-full flex"></div>
+        </div>
+        <!-- Editor code -->
+        <script type="module">
+            import * as CodeCake from "./codecake.js";
+
+            const codes = {
+                javascript: [
+                    `import * as CodeCake from "codecake";`,
+                    ``,
+                    `// First get reference to the target element`,
+                    `const target = document.getElementById("editor");`,
+                    ``,            
+                    `// Initialize codecake editor`,
+                    `const cake = CodeCake.create(target, {`,
+                    `    code: "",`,
+                    `    className: "codecake-dark",`,
+                    `    readOnly: false,`,
+                    `    lineNumbers: true,`,
+                    `    highlight: code => CodeCake.highlight(code, "javascript"),`,
+                    `});`,
+                    ``,
+                    `// You can use the API methods to access the code`,
+                    `cake.setCode("Hello world!");`,
+                    ``,
+                    `// Register events listeners`,
+                    `cake.onChange(code => console.log("New code: ", code));`,
+                ],
+                html: [
+                    `<html lang="en">`,
+                    `<head>`,
+                    `  <meta charset="utf-8">`,
+                    `  <title>CodeCake demo</title>`,
+                    `</head>`,
+                    `<body>`,
+                    `    <h1>CodeCake - Tiny code editor</h1>`,
+                    `    <div class="description">`,
+                    `        <b>CodeCake</b> is a tiny code editor written in less than 200 lines of code!`,
+                    `    </div>`,
+                    `</body>`,
+                    `</html>`,
+                ],
+                css: [
+                    `@font-face {`,
+                    `    font-family: Lato;`,
+                    `    src: url("./lato.ttf");`,
+                    `}`,
+                    ``,
+                    `html {`,
+                    `    background-color: #fafafa;`,
+                    `    margin: 0;`,
+                    `    padding: 0;`,
+                    `}`,
+                    `/* Style body element */`,
+                    `body {`,
+                    `    border: 2px solid #000;`,
+                    `    color: #333;`,
+                    `    font-size: 16px;`,
+                    `    font-family: "Lato", sans-serif;`,
+                    `    margin: 0;`,
+                    `    padding: 0;`,
+                    `}`,
+                    ``,
+                    `a:visited,`,
+                    `a:hover {`,
+                    `    color: #444;`,
+                    `    outline: none;`,
+                    `    text-decoration: none;  `,
+                    `}`,
+                    ``,
+                    `.link[data-active="true"] {`,
+                    `    /* color: currentColor; */`,
+                    `    color: gray;`,
+                    `}`,
+                ],
+                markdown: [
+                    `# CodeCake`,
+                    ``,
+                    `> A tiny and lightweight code editor for the web applications.`,
+                    ``,
+                    `## Features`,
+                    ``,
+                    `* Less than 200 lines of code. Easy to understand, customize, and integrate into your projects.`,
+                    `* Automatically indents new lines.`,
+                    `* Lightweight syntax highlighting with support for *JavaScript*, *HTML*, *CSS*, and *Markdown*.`,
+                    ``,
+                    `## Installtion`,
+                    ``,
+                    `Install **CodeCake** in your project with just one command:`,
+                    ``,
+                    "```bash",
+                    `npm install --save codecake`,
+                    "```",
+                ],
+            };
+    
+            const parent = document.getElementById("editor");
+            const themes = ["dark", "light"];
+            const languages = ["javascript", "html", "css", "markdown"];
+            const options = {
+                theme: 0,
+                highlight: true,
+                linenumbers: true,
+                language: 0,
+            };
+            const reloadEditor = () => {
+                // Remove parent childs
+                while(parent.firstChild) {
+                    parent.removeChild(parent.firstChild);
+                }
+
+                // Initialize cake editor
+                CodeCake.create(parent, {
+                    code: codes[languages[options.language]].join("\n"),
+                    className: `codecake-${themes[options.theme]} h-full`,
+                    readOnly: false,
+                    lineNumbers: options.linenumbers,
+                    highlight: options.highlight && (code => CodeCake.highlight(code, languages[options.language])),
+                });
+            };
+
+            // Language event listener
+            document.querySelector("span#switch-language").addEventListener("click", event => {
+                options.language = (options.language + 1) % languages.length;
+                event.target.textContent = languages[options.language];
+                reloadEditor();
+            });
+
+            // Theme event listener
+            document.querySelector("span#switch-theme").addEventListener("click", event => {
+                options.theme = (options.theme + 1) % themes.length;
+                event.target.textContent = themes[options.theme];
+                reloadEditor();
+            });
+
+            // Options switch
+            Array.from(document.querySelectorAll("span[data-option]")).forEach(el => {
+                return el.addEventListener("click", event => {
+                    const option = event.target.dataset.option;
+                    options[option] = !options[option]; // Toggle option value
+                    event.target.textContent = event.target.textContent === "ON" ? "OFF" : "ON";
+
+                    return reloadEditor();
+                });
+            });
+
+            // Init editor
+            reloadEditor();
+        </script>
+    </body>
+</html>

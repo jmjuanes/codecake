@@ -1,121 +1,109 @@
 <html>
     <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
+        <meta name="title" content="CodeCake">
+        <meta name="description" content="A tiny code editor for the web">
+        <meta property="og:site_name" content="CodeCake">
+        <meta property="og:title" content="CodeCake">
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.josemi.xyz/codecake" />
+        <meta property="og:image" content="https://www.josemi.xyz/codecake/header.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="CodeCake" />
+        <meta property="description" content="A tiny code editor for the web." />
         <title>CodeCake: tiny code editor for the web</title>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap">
+        <link rel="stylesheet" href="https://unpkg.com/lowcss/dist/low.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;500;700&display=swap">
         <link rel="stylesheet" href="./codecake.css">
         <style>
-            * {
-                box-sizing: border-box;
-            }
             body {
-                background: #f6f8f8;
-                margin: 0px;
-                padding: 0px;
-                font-family: 'Lato', sans-serif;
-                font-size: 16px;
-            }
-            .main {
-                margin: 24px auto;
-                max-width: 960px;
-                width: 100%;
-            }
-            .main .title {
-                font-size: 48px;
-                font-weight: bold;
-                margin-bottom: 16px;
-            }
-            .main .controls {
-                display: flex;
-                margin-bottom: 8px;
-            }
-            .main .controls .option {
-                margin-right: 16px;
-            }
-            .main .controls .option .status {
-                cursor: pointer;
-                font-weight: bold;
-            }
-            .main .CodeCake {
-                border-radius: 8px;
-                box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2);
-                height: 100%;
-                max-height: 400px;
+                font-family: 'Noto Serif', serif;
             }
         </style>
     </head>
-    <body>
+    <body class="m-0 text-base leading-normal text-gray-800">
         <!-- Editor example -->
-        <div class="main">
-            <div class="title">CodeCake</div>
-            <div class="controls">
-                <div class="option">
-                    Theme: <span id="switch-theme" class="status">dark</span>
-                </div>
-                <div class="option">
-                    Highlight: <span data-option="highlight" class="status switch">ON</span>
-                </div>
-                <div class="option">
-                    Line Numbers: <span data-option="linenumbers" class="status switch">ON</span>
-                </div>
-                <div class="option">
-                    Read only: <span data-option="readonly" class="status switch">OFF</span>
+        <div class="main w-full maxw-4xl mx-auto px-6">
+            <!-- Header section -->
+            <div class="w-full mt-4 md:mt-12 mb-6">
+                <div class="flex justify-between items-center w-full">
+                    <div class="text-xl md: text-2xl font-bold">CodeCake</div>
+                    <div class="flex gap-4">
+                        <a href="./demo.html" class="font-medium text-gray-800 text-sm hover:underline">Demo</a>
+                        <a href="https://github.com/jmjuanes/codecake" class="font-medium text-gray-800 text-sm hover:underline">GitHub</a>
+                    </div>
                 </div>
             </div>
-            <div id="editor" class=""></div>
+            <!-- Hero section -->
+            <div class="mb-6 w-full pt-16 pb-16">
+                <div class="text-6xl font-bold mb-3">Tiny Code Editor for web.</div>
+                <div class="text-lg text-gray-700">
+                    <b>CodeCake</b> is a tiny and lightweight code editor for web applications, crafted with elegance in <u>under 200 lines of code</u>. 
+                    It can be easily integrated into any web application for efficient and hassle-free code editing,
+                </div>
+            </div>
+            <!-- Example section-->
+            <div class="">
+                <div class="text-sm text-gray-600 mb-2 text-center">Try it out:</div>
+                <div id="editor" class="shadow-lg rounded-md overflow-hidden"></div>
+            </div>
+            <!-- Features section -->
+            <div class="w-full pt-20">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
+                    <div class="w-full">
+                        <div class="font-bold text-xl mb-3">Tiny and Minimalist</div>
+                        <div class=""><b>CodeCake</b> boasts a minimal codebase, with less than 200 lines of code, making it easy to understand, customize, and integrate into your projects.</div>
+                    </div>
+                    <div class="w-full">
+                        <div class="font-bold text-xl mb-3">Lightweight Syntax Highlighting</div>
+                        <div class="">Built-in support for common web languages: JavaScript, HTML, CSS, and Markdown. Our syntax highlighter, spanning under 150 lines of code, ensures your code stands out clearly.</div>
+                    </div>
+                    <div class="w-full">
+                        <div class="font-bold text-xl mb-3">Easy Integration</div>
+                        <div class="">Seamlessly integrate <b>CodeCake</b> into your web applications with minimal setup.</div>
+                    </div>
+                    <div class="w-full">
+                        <div class="font-bold text-xl mb-3">Open Source</div>
+                        <div class=""><b>CodeCake</b> is an open-source project, allowing you to contribute, modify, and use it freely under the MIT license.</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Getting started -->
+            <div class="w-full pt-16">
+                <div class="flex justify-center">
+                    <a href="https://github.com/jmjuanes/codecake#readme" class="text-white text-lg bg-gray-800 hover:bg-gray-900 rounded-md p-4">
+                        <b>Getting started</b>
+                    </a>
+                </div>
+            </div>
+            <!-- Footer section -->
+            <div class="pb-24 pt-20 text-sm text-gray-600">
+                Crafted with love by <a href="https://josemi.xyz" class="font-medium text-gray-900 hover:underline">Josemi</a>.
+            </div>
         </div>
         <!-- Editor code -->
         <script type="module">
-            import {CodeCake} from "./codecake.js";
-            import {highlightStr} from "./highlight.js";
+            import * as CodeCake from "./codecake.js";
     
             const parent = document.getElementById("editor");
-            const options = {
-                theme: "dark",
-                highlight: true,
-                linenumbers: true,
-                readonly: false,
-            };
-            const reloadEditor = () => {
-                // Remove parent childs
-                while(parent.firstChild) {
-                    parent.removeChild(parent.firstChild);
-                }
+            const exampleCode = [
+                `function sum(a, b) {`,
+                `    return a + b;`,
+                `};`,
+                ``,
+                `// Expected: 4`,
+                `console.log(sum(2, 2));`,
+            ];
 
-                // Initialize cake editor
-                CodeCake(parent, {
-                    initialCode: localStorage.getItem("code") || "",
-                    theme: options.theme,
-                    // indentation: "tabs",
-                    readonly: options.readonly,
-                    linenumbers: options.linenumbers,
-                    highlight: options.highlight && (code => highlightStr(code, "js")),
-                    onChange: code => {
-                        localStorage.setItem("code", code);
-                    },
-                });
-            };
-
-            // Theme event listener
-            document.querySelector("span#switch-theme").addEventListener("click", event => {
-                event.target.textContent = event.target.textContent === "dark" ? "light" : "dark";
-                options.theme = event.target.textContent;
-                reloadEditor();
+            // Initialize example editor
+            CodeCake.create(parent, {
+                code: exampleCode.join("\n"),
+                className: "codecake-dark",
+                lineNumbers: true,
+                highlight: code => CodeCake.highlight(code, "javascript"),
             });
-
-            // Options switch
-            Array.from(document.querySelectorAll("span.status.switch")).forEach(el => {
-                return el.addEventListener("click", event => {
-                    const option = event.target.dataset.option;
-                    options[option] = !options[option]; // Toggle option value
-                    event.target.textContent = event.target.textContent === "ON" ? "OFF" : "ON";
-
-                    return reloadEditor();
-                });
-            });
-
-            // Init editor
-            reloadEditor();
         </script>
     </body>
 </html>
