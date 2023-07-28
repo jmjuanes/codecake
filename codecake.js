@@ -110,7 +110,7 @@ export const create = (parent, options = {}) => {
                 linesCount = count;
             }
         }
-        (typeof options.highlight === "function") && (editor.innerHTML = options.highlight(currentCode));
+        (typeof options.highlight === "function") && (editor.innerHTML = options.highlight(currentCode, options.language || ""));
         (typeof listeners["change"] === "function") && listeners["change"](currentCode);
         focus && restorePosition(position);
     });
