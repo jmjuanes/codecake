@@ -60,7 +60,7 @@ export const create = (parent, options = {}) => {
     const editor = parent.querySelector(".codecake-editor");
     const lines = parent.querySelector(".codecake-lines");
     !options?.readOnly && editor.setAttribute("contenteditable", "plaintext-only");
-    (options?.className || "").split(" ").forEach(cn => parent.querySelector(".codecake").classList.add(cn));
+    (options?.className || "").split(" ").filter(c => !!c).forEach(c => parent.querySelector(".codecake").classList.add(c));
     options?.lineNumbers && (parent.querySelector(".codecake-gutters").style.display = "");
     options?.lineNumbers && (lines.style.display = "");
     // 'plaintext-only' mode is not supported in Firefox
