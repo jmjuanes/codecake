@@ -1,10 +1,10 @@
 {
     "name": "codecake",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "type": "module",
     "description": "Tiny code editor for the web",
     "repository": "https://github.com/jmjuanes/codecake.git",
-    "author": "Josemi Juanes <josemijuanes@gmail.com>",
+    "author": "Josemi Juanes <hello@josemi.xyz>",
     "bugs": "https://github.com/jmjuanes/codecake/issues",
     "main": "codecake.js",
     "module": "codecake.js",
