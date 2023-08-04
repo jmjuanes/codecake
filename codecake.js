@@ -207,7 +207,7 @@ const languages = {
     html: {
         aliases: [],
         rules: [
-            {regex: /^(<!--.*-->)/, token: "comment"},
+            {regex: /^(<!--(?:.|\s)*?-->)/, token: "comment"},
             {
                 regex: /^(<([\w]+)(?![^>]*\/>)[^>]*>)/,
                 rules: [
@@ -241,7 +241,7 @@ const languages = {
     javascript: {
         aliases: ["js"],
         rules: [
-            {regex: new RegExp("^(/\\*[^*]*\\*+(?:[^/*][^*]*\\*+)*/)|^(//[^\n]+)"), token: "comment"},
+            {regex: /^(\/\*(?:.|\s)*?\*\/|\/\/(?:.)*)/, token: "comment"},
             {regex: new RegExp(`^(\'.*\')|^(\".*\")|^(\`.*\`)`), token: "string"},
             {regex: new RegExp(`^\\b(${jsKeywords.join("|")})\\b`), token: "keyword"},
             {regex: /^\b(true|false|null)\b/, token: "constant"},
@@ -260,7 +260,7 @@ const languages = {
     css: {
         aliases: [],
         rules: [
-            {regex: new RegExp("^(/\\*[^*]*\\*+(?:[^/*][^*]*\\*+)*/)"), token: "comment"},
+            {regex: /^(\/\*(?:.|\s)*?\*\/)/, token: "comment"},
             {regex: /^([{},;])/, token: "punctuation"},
             {regex: /^(@(font-face|import|keyframes))/, token: "keyword"},
             {
