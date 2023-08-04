@@ -223,7 +223,7 @@ const languages = {
                         rules: [
                             {regex: /^([\w\.\-\_]+)/, token: "attr"},
                             {regex: /^(=)/, token: "punctuation"},
-                            {regex: /^("[^"]+")/, token: "string"},
+                            {regex: /^("(?:.)*?")/, token: "string"},
                         ],
                     },
                     {regex: /^(>)/, token: "punctuation"},
@@ -242,7 +242,7 @@ const languages = {
         aliases: ["js"],
         rules: [
             {regex: /^(\/\*(?:.|\s)*?\*\/|\/\/(?:.)*)/, token: "comment"},
-            {regex: new RegExp(`^(\'.*\')|^(\".*\")|^(\`.*\`)`), token: "string"},
+            {regex: /^(\'(?:.)*?\')|^(\"(?:.)*?\")|^(\`(?:.|\s)*?\`)/, token: "string"},
             {regex: new RegExp(`^\\b(${jsKeywords.join("|")})\\b`), token: "keyword"},
             {regex: /^\b(true|false|null)\b/, token: "constant"},
             {regex: /^([+-]?([0-9]*[.])?[0-9]+)/, token: "number"},
@@ -275,7 +275,7 @@ const languages = {
                     },
                     {regex: /^(#[\da-f]{3,8})/, token: "constant"},
                     {regex: /^([+-]?([0-9]*[.])?[0-9]+)/, token: "number"},
-                    {regex: new RegExp(`^(\'.*\')|^(\".*\")`), token: "string"},
+                    {regex: /^(\'(?:.)*?\')|^(\"(?:.)*?\")/, token: "string"},
                     {regex: new RegExp(`^\\b(${cssConstants.join("|")})\\b`), token: "constant"},
                     {regex: /^\b(cm|mm|in|px|pt|pc|em|rem|vw|vh)\b/, token: "unit"},
                 ],
@@ -285,7 +285,7 @@ const languages = {
             {regex: /^(\.[\w\-\_]+)/, token: "selector-class"},
             {regex: /^(\#[\w\-\_]+)/, token: "selector-id"},
             {regex: /^(body|html|a|div|table|td|tr|th|input|button|textarea|label|form|svg|g|path|rect|circle|ul|li|ol)\b/, token: "selector-tag"},
-            {regex: new RegExp(`^(\'.*\')|^(\".*\")`), token: "string"},
+            {regex: /^(\'(?:.)*?\')|^(\"(?:.)*?\")/, token: "string"},
         ],
     },
     markdown: {
