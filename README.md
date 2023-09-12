@@ -92,7 +92,7 @@ We provide a tiny highlight module that you can use to highlight the text in you
 ```javascript
 CodeCake.create(parent, {
     language: "javascript",
-    highlgiht: (code, lang) => {
+    highlight: (code, lang) => {
         return CodeCake.highlight(code, lang);
     },
     // ...other editor options
