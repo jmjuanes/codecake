@@ -124,6 +124,12 @@ CodeCake.create(parent, {
 });
 ```
 
+## Preventing keyboard trap
+
+The `Tab` key is commonly used by developers to indent code. However, this can sometimes lead to unexpected behavior, where the focus remains trapped within the editor, disrupting the workflow. To address this, we have introduced the `Esc` `Tab` key combination to move to the next focusable element, and the `Esc` `Shift + Tab` key combination to move to the previous focusable element.
+
+Please note that **we do not provide built-in help or a dedicated user interface for this feature**. This is because the editor is designed as a lightweight code editor component, not a standalone application. Users are encouraged to consult the documentation or any user guides provided within the context of the web application that incorporates this component for information on available keyboard shortcuts and features.
+
 ## License
 
 CodeCake is released under the [MIT License](./LICENSE).

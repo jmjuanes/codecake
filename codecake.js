@@ -53,6 +53,7 @@ export const create = (parent, options = {}) => {
     let prevCode = "";
     let focus = false;
     let linesCount = -1;
+    let escKeyPressed = false;
     const listeners = {}; // Store events listeners
     const tab = options?.indentWithTabs ? "\t" : " ".repeat(options.tabSize || 4);
     const endl = String.fromCharCode(10);
@@ -130,7 +131,7 @@ export const create = (parent, options = {}) => {
                 insertText(endl + indentation);
             }
             // Handle backspace
-            else if (event.key === "Backspace" || (event.key === "Tab" && event.shiftKey)) {
+            else if (event.key === "Backspace" || (event.key === "Tab" && !escKeyPressed && event.shiftKey)) {
                 if (window.getSelection().type === "Caret") {
                     let removeChars = 0;
                     const pos = savePosition();
@@ -148,10 +149,12 @@ export const create = (parent, options = {}) => {
                 }
             }
             // Handle insert tab
-            else if (event.key === "Tab" && !event.shiftKey) {
+            else if (event.key === "Tab" && !escKeyPressed && !event.shiftKey) {
                 event.preventDefault();
                 insertText(tab);
             }
+            // Save if escape key has been pressed to avoid trapping keyboard focus
+            escKeyPressed = event.key === "Escape";
         }
     });
     editor.addEventListener("keyup", event => {
