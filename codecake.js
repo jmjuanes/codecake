@@ -242,7 +242,7 @@ const languages = {
         ],
     },
     javascript: {
-        aliases: ["js"],
+        aliases: ["js", "jsx"],
         rules: [
             {regex: /^(\/\*(?:.|\s)*?\*\/|\/\/(?:.)*)/, token: "comment"},
             {regex: /^(\'(?:.)*?\')|^(\"(?:.)*?\")|^(\`(?:.|\s)*?\`)/, token: "string"},
@@ -250,6 +250,27 @@ const languages = {
             {regex: /^\b(true|false|null)\b/, token: "constant"},
             {regex: /^([+-]?([0-9]*[.])?[0-9]+)/, token: "number"},
             {regex: /^([{}[\](\):;\\.,])/, token: "punctuation"},
+            {
+                regex: /^(<(?:=>|[^>])+(?:\/)?>)/,
+                rules: [
+                    {
+                        regex: /^(<\/?[\w]+)/,
+                        rules: [
+                            {regex: /^(<)/, token: "punctuation"},
+                            {regex: /^([\w]+)/, token: "tag"},
+                        ],
+                    },
+                    {
+                        regex: /^([\w\.\-\_]+=(?:"[^"]*"|\{[^\}]*}))/,
+                        rules: [
+                            {regex: /^([\w\.\-\_]+)/, token: "attr"},
+                            {regex: /^(=)/, token: "punctuation"},
+                            {regex: /^("(?:.)*?"|\{(?:.)*?})/, token: "string"},
+                        ],
+                    },
+                    {regex: /^(>)/, token: "punctuation"},
+                ],
+            },
             {regex: /^([?!&@~\/\-+*%=<>|])/, token: "operator"},
             {
                 regex: /^([a-zA-Z][\w]*\s*\()/,
@@ -339,7 +360,6 @@ const _highlight = (code, rules) => {
     return text;
 };
 
-// Highlight the provided string
 export const highlight = (code, language = "javascript") => {
     return _highlight(code, languages[language]?.rules || []);
 };
