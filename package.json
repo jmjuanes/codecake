@@ -13,6 +13,10 @@
         "./codecake.js": "./codecake.js",
         "./codecake.css": "./codecake.css"
     },
+    "scripts": {
+        "postinstall": "mkdir assets && cp ./node_modules/lowcss/dist/low.css assets/",
+        "serve": "serve ."
+    },
     "files": [
         "README.md",
         "header.png",
@@ -20,5 +24,9 @@
         "codecake.css",
         "codecake.js"
     ],
-    "license": "MIT"
+    "license": "MIT",
+    "devDependencies": {
+        "lowcss": "^0.16.0",
+        "serve": "^14.2.1"
+    }
 }
