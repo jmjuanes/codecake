@@ -248,7 +248,7 @@ const languages = {
             {regex: /^(\'(?:.)*?\')|^(\"(?:.)*?\")|^(\`(?:.|\s)*?\`)/, token: "string"},
             {regex: new RegExp(`^\\b(${jsKeywords.join("|")})\\b`), token: "keyword"},
             {regex: /^\b(true|false|null)\b/, token: "constant"},
-            {regex: /^([+-]?([0-9]*[.])?[0-9]+)/, token: "number"},
+            {regex: /^([+-]?([0-9]*[.])?[0-9]+)\b/, token: "number"},
             {regex: /^([{}[\](\):;\\.,])/, token: "punctuation"},
             {
                 regex: /^(<(?:=>|[^>])+(?:\/)?>)/,
@@ -279,6 +279,7 @@ const languages = {
                     {regex: /^(\()/, token: "punctuation"},
                 ],
             },
+            {regex: /^([\w]+)/, token: "word"},
         ],
     },
     css: {
