@@ -1,6 +1,6 @@
 {
     "name": "codecake",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "type": "module",
     "description": "Tiny code editor for the web",
     "repository": "https://github.com/jmjuanes/codecake.git",
