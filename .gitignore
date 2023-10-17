@@ -3,5 +3,5 @@ node_modules
 package-lock.json
 yarn.lock
 
-## Output folders
-assets
+## External dependencies
+low.css
