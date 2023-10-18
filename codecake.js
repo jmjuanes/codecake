@@ -229,7 +229,7 @@ const languages = {
     html: {
         aliases: [],
         rules: [
-            {regex: /^(<!--(?:.|\s)*?-->)/, token: "comment"},
+            {regex: /^(<!--(?:.)*?-->)/, token: "comment"},
             {
                 regex: /^(<([\w]+)(?![^>]*\/>)[^>]*>)/,
                 rules: [
