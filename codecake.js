@@ -65,6 +65,7 @@ export const create = (parent, options = {}) => {
     const listeners = {}; // Store events listeners
     const tab = options?.indentWithTabs ? "\t" : " ".repeat(options.tabSize || 4);
     const endl = String.fromCharCode(10);
+    const autoIndent = options?.autoIndent ?? true;
     const addClosing = options?.addClosing ?? true;
     const openChars = `[({"'`, closeChars = `])}"'`;
     parent.appendChild(getEditorTemplate());
@@ -127,14 +128,17 @@ export const create = (parent, options = {}) => {
         if (!event.defaultPrevented && !options?.readOnly) {
             prevCode = getCode();
             // Handle inserting new line
-            if (event.key === "Enter") {
+            if (event.key === "Enter" && autoIndent) {
                 event.preventDefault();
                 const lines = getCodeBefore().split(endl);
+                const extraLine = /^[)}\]]/.test(getCodeAfter());
+                const pos = savePosition();
                 const lastLine = lines[lines.length - 1];
                 const lastIndentation = (/^([\s]*)/.exec(lastLine))?.[0] || "";
                 const lastChar = lastLine.trim().slice(-1);
                 const indentation = lastIndentation + (/[\[\{]/.test(lastChar) ? tab : "");
-                insertText(endl + indentation);
+                setCode(prevCode.substring(0, pos) + endl + indentation + (extraLine ? (endl + lastIndentation) : "") + prevCode.substring(pos, prevCode.length), 1);
+                restorePosition(pos + 1 + indentation.length);
             }
             // Handle backspace
             else if (event.key === "Backspace" || (event.key === "Tab" && !escKeyPressed && event.shiftKey)) {
@@ -184,10 +188,8 @@ export const create = (parent, options = {}) => {
     editor.addEventListener("blur", () => focus = false);
     editor.addEventListener("scroll", () => lines.style.top = `-${editor.scrollTop}px`);
     editor.addEventListener("paste", () => update(10));
-
     // Initialize editor values
     options?.code ? setCode(options?.code) : update(1);
-
     return {
         getCode: () => getCode(),
         setCode: code => setCode(code || "", 1),
