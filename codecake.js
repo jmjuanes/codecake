@@ -65,7 +65,7 @@ export const create = (parent, options = {}) => {
     const listeners = {}; // Store events listeners
     const tab = options?.indentWithTabs ? "\t" : " ".repeat(options.tabSize || 4);
     const endl = String.fromCharCode(10);
-    const addClosing = options?.addClosingChars ?? true;
+    const addClosing = options?.addClosing ?? true;
     const openChars = `[({"'`, closeChars = `])}"'`;
     parent.appendChild(getEditorTemplate());
     const editor = parent.querySelector(".codecake-editor");
