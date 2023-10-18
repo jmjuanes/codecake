@@ -60,6 +60,7 @@ The first argument of the `CodeCake.create` function is the reference to the `<d
 - `lineNumbers`: editor will display line numbers. Default is `false`.
 - `indentWithTabs`: editor will use the tab character `"\t"` for indentation instead of spaces. Default is `false`.
 - `tabSize`: number of spaces for a tab. Default is `4`.
+- `addClosing`: automatically close brackets, braces, parentheses, and quotes. Default is `true`.
 - `highlight`: provide a custom function to highlight code. Default is `null` (no highlight). The pprovided function will be called with the current code to highlight and the language string provided in `options.language`.
 - `className`: custom classname to customize the editing area. Default is `""`.
 
