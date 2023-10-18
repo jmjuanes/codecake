@@ -12,6 +12,14 @@ const insertText = text => {
     sel.addRange(range);
 };
 
+const getCodeBeforeOrAfter = (parent, dir) => {
+    const {startContainer, startOffset, endContainer, endOffset} = window.getSelection().getRangeAt(0);
+    const range = document.createRange();
+    range.selectNodeContents(parent);
+    dir === -1 ? range.setEnd(startContainer, startOffset) : range.setStart(endContainer, endOffset);
+    return range.toString();
+};
+
 const debounce = fn => {
     let timer = null;
     return wait => {
@@ -57,6 +65,8 @@ export const create = (parent, options = {}) => {
     const listeners = {}; // Store events listeners
     const tab = options?.indentWithTabs ? "\t" : " ".repeat(options.tabSize || 4);
     const endl = String.fromCharCode(10);
+    const addClosing = options?.addClosingChars ?? true;
+    const openChars = `[({"'`, closeChars = `])}"'`;
     parent.appendChild(getEditorTemplate());
     const editor = parent.querySelector(".codecake-editor");
     const lines = parent.querySelector(".codecake-lines");
@@ -71,16 +81,12 @@ export const create = (parent, options = {}) => {
     // Manage code
     const setCode = (newCode, wait) => {
         editor.textContent = newCode;
+        prevCode = editor.textContent || "";
         update(wait ?? 50);
     };
     const getCode = () => editor.textContent || "";
-    const getCodeBefore = () => {
-        const {startContainer, startOffset} = window.getSelection().getRangeAt(0);
-        const range = document.createRange();
-        range.selectNodeContents(editor);
-        range.setEnd(startContainer, startOffset);
-        return range.toString();
-    };
+    const getCodeBefore = () => getCodeBeforeOrAfter(editor, -1);
+    const getCodeAfter = () => getCodeBeforeOrAfter(editor, +1);
     // Position managers
     const savePosition = () => {
         const range = window.getSelection().getRangeAt(0);
@@ -137,14 +143,11 @@ export const create = (parent, options = {}) => {
                     const pos = savePosition();
                     const lines = prevCode.slice(0, pos).split(endl);
                     const line = lines[lines.length - 1] || ""; 
-                    // Check for line not empty with space characters
                     if (line !== "" && line.trim() === "") {
                         event.preventDefault();
                         removeChars = (line.length % tab.length === 0) ? tab.length : line.length % tab.length;
                         setCode(prevCode.substring(0, pos - removeChars) + prevCode.substring(pos, prevCode.length), 1);
-                        prevCode = getCode();
                     }
-                    // Restore cursor position
                     restorePosition(pos - removeChars);
                 }
             }
@@ -152,6 +155,20 @@ export const create = (parent, options = {}) => {
             else if (event.key === "Tab" && !escKeyPressed && !event.shiftKey) {
                 event.preventDefault();
                 insertText(tab);
+            }
+            // Skip closing char
+            else if (addClosing && closeChars.includes(event.key) && getCodeAfter().charAt(0) === event.key) {
+                event.preventDefault();
+                restorePosition(savePosition() + 1);
+            }
+            // Handle closing chars
+            else if (addClosing && openChars.includes(event.key)) {
+                event.preventDefault();
+                const [start, end] = [getCodeBefore().length, getCodeAfter().length];
+                const pos = savePosition();
+                const wrapText = (prevCode.length - start - end > 0) ? prevCode.substring(start, prevCode.length - end) : "";
+                setCode(prevCode.substring(0, pos - wrapText.length) + event.key + wrapText + closeChars[openChars.indexOf(event.key)] + prevCode.substring(pos, prevCode.length), 1);
+                restorePosition(pos + 1);
             }
             // Save if escape key has been pressed to avoid trapping keyboard focus
             escKeyPressed = event.key === "Escape";
