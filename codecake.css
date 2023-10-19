@@ -176,12 +176,45 @@
     color: #dd556e;
 }
 
+/* MonoBlue theme */
+.codecake-monoblue {
+    background-color: #eef2f6;
+    color: #011e48;
+}
+.codecake-monoblue .token-keyword, 
+.codecake-monoblue .token-tag,
+.codecake-monoblue .token-selector-tag, 
+.codecake-monoblue .token-section {
+    font-weight: bold;
+}
+.codecake-monoblue .token-string,
+.codecake-monoblue .token-section {
+    color: #1086ce;
+}
+.codecake-monoblue .token-comment {
+    color: #8e9eaf;
+}
+.codecake-monoblue .token-code,
+.codecake-monoblue .token-quote,
+.codecake-monoblue .token-tag, 
+.codecake-monoblue .token-attr,
+.codecake-monoblue .token-attribute,
+.codecake-monoblue .token-selector-class,
+.codecake-monoblue .token-punctuation {
+    color: #224d84;
+}
+.codecake-monoblue .token-bullet {
+    color: #8fc8f3;
+}
+
 /* Common styles */
 .codecake-light .token-strong,
-.codecake-dark .token-strong {
+.codecake-dark .token-strong,
+.codecake-monoblue .token-strong {
     font-weight: bold;
 }
 .codecake-light .token-emphasis,
-.codecake-dark .token-emphasis {
+.codecake-dark .token-emphasis,
+.codecake-monoblue .token-emphasis {
     font-style: italic;
 }
