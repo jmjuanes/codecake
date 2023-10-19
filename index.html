@@ -14,31 +14,32 @@
         <meta property="og:image:alt" content="CodeCake" />
         <meta property="description" content="A tiny code editor for the web." />
         <title>CodeCake: tiny code editor for the web</title>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;500;700&display=swap">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@700&display=swap">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;500;700&display=swap">
         <link rel="stylesheet" href="./low.css">
         <link rel="stylesheet" href="./codecake.css">
-        <style>
-            body {
-                font-family: 'Noto Serif', serif;
-            }
-        </style>
     </head>
-    <body class="m-0 text-base leading-normal text-gray-900">
+    <body class="m-0 font-lato text-base leading-normal text-gray-900">
         <!-- Editor example -->
         <div class="main w-full max-w-4xl mx-auto px-6">
             <!-- Header section -->
             <div class="w-full mt-4 md:mt-12 mb-6">
                 <div class="flex justify-between items-center w-full">
-                    <div class="text-xl md: text-2xl font-bold">CodeCake</div>
+                    <div class="text-xl md:text-2xl font-bold font-plex-serif tracking-tight select-none">
+                        <a href="./" class="text-gray-950">CodeCake</a>
+                    </div>
                     <div class="flex gap-4">
-                        <a href="./demo.html" class="font-medium text-gray-800 text-sm hover:underline">Demo</a>
-                        <a href="https://github.com/jmjuanes/codecake" class="font-medium text-gray-800 text-sm hover:underline">GitHub</a>
+                        <a href="./demo.html" class="font-medium text-gray-900 hover:text-gray-800 hover:underline">Demo</a>
+                        <a href="https://github.com/jmjuanes/codecake#api" class="font-medium text-gray-900 hover:text-gray-800 hover:underline">API</a>
+                        <a href="https://github.com/jmjuanes/codecake" class="font-medium text-gray-900 hover:text-gray-800 hover:underline">GitHub</a>
                     </div>
                 </div>
             </div>
             <!-- Hero section -->
-            <div class="mb-6 w-full pt-16 pb-16">
-                <div class="text-6xl font-bold mb-3">Tiny Code Editor for web.</div>
+            <div class="mb-6 w-full pt-16 pb-10">
+                <div class="text-6xl font-bold font-plex-serif tracking-tight mb-3">
+                    <strong>Tiny Code Editor for web.</strong>
+                </div>
                 <div class="text-lg text-gray-800">
                     <b>CodeCake</b> is a tiny and lightweight code editor for web applications, crafted with elegance in <u>under 200 lines of code</u>. 
                     It can be easily integrated into any web application for efficient and hassle-free code editing,
@@ -51,35 +52,79 @@
             </div>
             <!-- Features section -->
             <div class="w-full pt-20">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 w-full">
                     <div class="w-full">
-                        <div class="font-bold text-xl mb-3">Tiny and Minimalist</div>
+                        <div class="font-bold text-2xl mb-3">Tiny and Minimal</div>
                         <div class=""><b>CodeCake</b> boasts a minimal codebase, with less than 200 lines of code, making it easy to understand, customize, and integrate into your projects.</div>
                     </div>
                     <div class="w-full">
-                        <div class="font-bold text-xl mb-3">Lightweight Syntax Highlighting</div>
+                        <div class="font-bold text-2xl mb-3">Lightweight Syntax Highlighting</div>
                         <div class="">Built-in support for common web languages: JavaScript, HTML, CSS, and Markdown. Our syntax highlighter, spanning under 150 lines of code, ensures your code stands out clearly.</div>
                     </div>
                     <div class="w-full">
-                        <div class="font-bold text-xl mb-3">Easy Integration</div>
+                        <div class="font-bold text-2xl mb-3">Easy Integration</div>
                         <div class="">Seamlessly integrate <b>CodeCake</b> into your web applications with minimal setup.</div>
                     </div>
                     <div class="w-full">
-                        <div class="font-bold text-xl mb-3">Open Source</div>
+                        <div class="font-bold text-2xl mb-3">Open Source</div>
                         <div class=""><b>CodeCake</b> is an open-source project, allowing you to contribute, modify, and use it freely under the MIT license.</div>
                     </div>
                 </div>
             </div>
-            <!-- Getting started -->
-            <div class="w-full pt-16">
-                <div class="flex justify-center">
-                    <a href="https://github.com/jmjuanes/codecake#readme" class="text-white text-lg bg-gray-900 hover:bg-gray-950 rounded-md p-4">
-                        <b>Getting started</b>
-                    </a>
+            <!-- Usage -->
+            <div class="w-full pt-20">
+                <div class="text-4xl font-bold font-plex-serif tracking-tight mb-4">Usage</div>
+                <div class="mb-4">
+                    <span><b>CodeCake</b> is designed for easy integration into your web applications. </span>
+                    <span>You can include it in your project using one of the following methods. </span>
+                </div>
+                <div class="text-2xl font-bold font-plex-serif tracking-tight mb-4 mt-8">From a package manager</div>
+                <div class="mb-4">
+                    <span>You can add <b>CodeCake</b> to your project using a package manager like NPM or Yarn:</span>
+                </div>
+                <div class="mb-4">
+                    <pre data-language="bash">## Install using npm:<br>$ npm install --save codecake<br><br>## Install using yarn:<br>$ yarn add codecake</pre>
+                </div>
+                <div class="mb-4">
+                    <span>Then, import <b>CodeCake</b> into your project and initialize the editor:</span>
+                </div>
+                <div class="mb-4">
+                    <pre data-language="javascript">// Import the CodeCake CSS
+import "codecake/codecake.css";
+
+// Import the editor module
+import * as CodeCake from "codecake";
+
+// Initialize the editor
+const parent = document.getElementById("editor");
+const cake = CodeCake.create(parent, {
+    //... your options
+});</pre>
+                </div>
+
+                <div class="text-2xl font-bold font-plex-serif tracking-tight mb-4 mt-8">From a CDN</div>
+                <div class="mb-4">
+                    <span>If you prefer a quick and simple way to get started without npm, you can use a CDN like <b>unpkg</b> to include <b>CodeCake</b> directly in your HTML file.</span>
+                </div>
+                <div class="mb-4">
+                    <span>First, import the CSS styles by adding the following <code class="px-1 font-bold">&lt;link&gt;</code> tag to your HTML:</span>
+                </div>
+                <div class="mb-4">
+                    <pre data-language="html">&lt;link rel="stylesheet" href="https://unpkg.com/codecake/codecake.css"&gt;</pre>
+                </div>
+                <div class="mb-4">
+                    <span>Then, add the following code in a <code class="px-1 font-bold">&lt;script type="module"&gt;</code> tag:</span>
+                </div>
+                <div class="mb-4">
+                    <pre data-language="javascript">import * as CodeCake from "https://unpkg.com/codecake/codecake.js";
+const parent = document.getElementById("editor");
+const cake = CodeCake.create(parent, {
+    //... your options
+});</pre>
                 </div>
             </div>
             <!-- Footer section -->
-            <div class="pb-24 pt-20 text-sm text-gray-700">
+            <div class="pb-16 pt-20 text-sm text-gray-700">
                 Crafted with love by <a href="https://josemi.xyz" class="font-medium text-gray-900 hover:underline">Josemi</a>.
             </div>
         </div>
@@ -103,6 +148,22 @@
                 className: "codecake-dark",
                 lineNumbers: true,
                 highlight: code => CodeCake.highlight(code, "javascript"),
+            });
+        </script>
+        <!-- highlight examples -->
+        <script type="module">
+            import {highlight} from "./codecake.js";
+            const classList = "codecake-dark text-white p-4 rounded-md shadow-md overflow-x-auto";
+            Array.from(document.querySelectorAll(`pre[data-language]`)).forEach(el => {
+                // Highlight the code of the element
+                const language = el.dataset.language;
+                if (language === "html" || language === "javascript") {
+                    el.innerHTML = highlight(el.textContent, language);
+                }
+                // Add styles to pre element
+                classList.split(" ").forEach(css => {
+                    el.classList.add(css);
+                });
             });
         </script>
     </body>

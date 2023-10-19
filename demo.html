@@ -3,28 +3,63 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
         <title>CodeCake Demo</title>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@700&display=swap">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;500;700&display=swap">
         <link rel="stylesheet" href="./low.css">
         <link rel="stylesheet" href="./codecake.css">
     </head>
     <body class="m-0 font-lato text-gray-900 leading-normal">
-        <!-- Editor example -->
-        <div class="main w-full h-full p-4 flex flex-col min-h-0">
-            <div class="rounded-md bg-gray-100 px-4 py-2 flex flex-wrap mb-2 gap-4 select-none">
-                <div class="">
-                    Language: <span id="switch-language" class="cursor-pointer font-bold">javascript</span>
-                </div>
-                <div class="option">
-                    Theme: <span id="switch-theme" class="status cursor-pointer font-bold">dark</span>
-                </div>
-                <div class="option">
-                    Highlight: <span data-option="highlight" class="cursor-pointer font-bold">ON</span>
-                </div>
-                <div class="option">
-                    Line Numbers: <span data-option="linenumbers" class="cursor-pointer font-bold">ON</span>
+        <!-- Main content -->
+        <div class="main w-full max-w-4xl mx-auto px-6">
+            <!-- Header section -->
+            <div class="w-full mt-4 md:mt-12 mb-6">
+                <div class="flex justify-between items-center w-full">
+                    <div class="text-xl md:text-2xl font-bold font-plex-serif tracking-tight select-none">
+                        <a href="./" class="text-gray-950">CodeCake</a>
+                    </div>
+                    <div class="flex gap-4">
+                        <a href="./demo.html" class="font-medium text-gray-900 hover:text-gray-800 hover:underline">Demo</a>
+                        <a href="https://github.com/jmjuanes/codecake#api" class="font-medium text-gray-900 hover:text-gray-800 hover:underline">API</a>
+                        <a href="https://github.com/jmjuanes/codecake" class="font-medium text-gray-900 hover:text-gray-800 hover:underline">GitHub</a>
+                    </div>
                 </div>
             </div>
-            <div id="editor" class="shadow-lg rounded-md overflow-hidden h-full flex"></div>
+            <!-- Hero section -->
+            <div class="w-full pt-6 pb-6">
+                <div class="text-4xl font-bold font-plex-serif tracking-tight">
+                    <strong>Demo</strong>
+                </div>
+            </div>
+            <div class="w-full">
+                <!-- Demo options -->
+                <div class="rounded-md bg-neutral-100 p-4 grid grid-cols-1 md:grid-cols-2 mb-4 gap-4 select-none">
+                    <div class="">
+                        <div class="font-bold mb-1">Language:</div>
+                        <select class="w-full bg-neutral-200 rounded-md" id="select-language">
+                            <option value="javascript">JavaScript</option>
+                            <option value="html">HTML</option>
+                            <option value="css">CSS</option>
+                            <option value="markdown">MarkDown</option>
+                        </select>
+                    </div>
+                    <div class="">
+                        <div class="font-bold mb-1">Theme</div>
+                        <select class="w-full bg-neutral-200 rounded-md" id="select-theme">
+                            <option value="dark">Dark (codecake-dark)</option>
+                            <option value="light">Light (codecake-light)</option>
+                            <option value="monoblue">Mono Blue (codecake-monoblue)</option>
+                            <option value="one-dark">One Dark (codecake-one-dark)</option>
+                            <option value="one-light">One Light (codecake-one-light)</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Demo editor-->
+                <div id="editor" class="shadow-lg rounded-md overflow-hidden flex"></div>
+            </div>
+            <!-- Footer section -->
+            <div class="pb-16 pt-16 text-sm text-gray-700">
+                Crafted with love by <a href="https://josemi.xyz" class="font-medium text-gray-900 hover:underline">Josemi</a>.
+            </div>
         </div>
         <!-- Editor code -->
         <script type="module">
@@ -40,7 +75,7 @@
                     `// Initialize codecake editor`,
                     `const cake = CodeCake.create(target, {`,
                     `    code: "",`,
-                    `    className: "codecake-dark",`,
+                    `    className: "codecake-{theme}",`,
                     `    readOnly: false,`,
                     `    lineNumbers: true,`,
                     `    highlight: code => CodeCake.highlight(code, "javascript"),`,
@@ -102,7 +137,7 @@
                 markdown: [
                     `# CodeCake`,
                     ``,
-                    `> A tiny and lightweight code editor for the web applications.`,
+                    `> A tiny and lightweight code editor for web applications.`,
                     ``,
                     `## Features`,
                     ``,
@@ -110,7 +145,7 @@
                     `* Automatically indents new lines.`,
                     `* Lightweight syntax highlighting with support for *JavaScript*, *HTML*, *CSS*, and *Markdown*.`,
                     ``,
-                    `## Installtion`,
+                    `## Installation`,
                     ``,
                     `Install **CodeCake** in your project with just one command:`,
                     ``,
@@ -121,13 +156,11 @@
             };
     
             const parent = document.getElementById("editor");
-            const themes = ["dark", "light"];
-            const languages = ["javascript", "html", "css", "markdown"];
             const options = {
-                theme: 0,
+                theme: "dark",
                 highlight: true,
                 linenumbers: true,
-                language: 0,
+                language: "javascript",
             };
             const reloadEditor = () => {
                 // Remove parent childs
@@ -137,36 +170,19 @@
 
                 // Initialize cake editor
                 CodeCake.create(parent, {
-                    code: codes[languages[options.language]].join("\n"),
-                    className: `codecake-${themes[options.theme]} h-full`,
+                    code: codes[options.language].join("\n").replace("{theme}", options.theme),
+                    className: `codecake-${options.theme} h-full`,
                     readOnly: false,
                     lineNumbers: options.linenumbers,
-                    highlight: options.highlight && (code => CodeCake.highlight(code, languages[options.language])),
+                    highlight: options.highlight && (code => CodeCake.highlight(code, options.language)),
                 });
             };
 
-            // Language event listener
-            document.querySelector("span#switch-language").addEventListener("click", event => {
-                options.language = (options.language + 1) % languages.length;
-                event.target.textContent = languages[options.language];
-                reloadEditor();
-            });
-
-            // Theme event listener
-            document.querySelector("span#switch-theme").addEventListener("click", event => {
-                options.theme = (options.theme + 1) % themes.length;
-                event.target.textContent = themes[options.theme];
-                reloadEditor();
-            });
-
-            // Options switch
-            Array.from(document.querySelectorAll("span[data-option]")).forEach(el => {
-                return el.addEventListener("click", event => {
-                    const option = event.target.dataset.option;
-                    options[option] = !options[option]; // Toggle option value
-                    event.target.textContent = event.target.textContent === "ON" ? "OFF" : "ON";
-
-                    return reloadEditor();
+            // Register listeners to language and theme
+            ["language", "theme"].forEach(type => {
+                document.querySelector(`select#select-${type}`).addEventListener("change", event => {
+                    options[type] = event.target.value;
+                    reloadEditor();
                 });
             });
 
