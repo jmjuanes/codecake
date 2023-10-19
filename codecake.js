@@ -213,7 +213,7 @@ const escape = text => {
 };
 
 const jsKeywords = [
-    "async", "await", "break", "case", "catch", "class", "const", "continue", "constructor", "debugger", "default",
+    "as", "async", "await", "break", "case", "catch", "class", "const", "continue", "constructor", "debugger", "default",
     "delete", "do", "else", "export", "extends", "finally", "for", "from", "function", "if", "implements", "import",
     "in", "instanceof", "let", "new", "of", "return", "static", "super", "switch", "symbol", "this", "throw",
     "try", "typeof", "undefined", "var", "void", "while", "with", "yield",
