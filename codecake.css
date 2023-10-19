@@ -207,14 +207,100 @@
     color: #8fc8f3;
 }
 
+/* One Light theme */
+/* Inspired in https://github.com/akamud/vscode-theme-onelight */
+.codecake-one-light {
+    background-color: #fafafa;
+    color: #393c46;
+}
+.codecake-one-light .token-keyword {
+    color: #a329a1;
+}
+.codecake-one-light .token-string,
+.codecake-one-light .token-attribute {
+    color: #54ac53;
+}
+.codecake-one-light .token-constant {
+    color: #0084bd;
+}
+.codecake-one-light .token-number,
+.codecake-one-light .token-unit,
+.codecake-one-light .token-selector-class,
+.codecake-one-light .token-selector-attr,
+.codecake-one-light .token-selector-pseudo,
+.codecake-one-light .token-attr {
+    color: #a37000;
+}
+.codecake-one-light .token-bullet,
+.codecake-one-light .token-title.function {
+    color: #4279f0;
+}
+.codecake-one-light .token-quote,
+.codecake-one-light .token-comment {
+    color: #a3a4a8;
+}
+.codecake-one-light .token-section,
+.codecake-one-light .token-tag,
+.codecake-one-light .token-selector-tag {
+    color: #e74a3c;
+}
+.codecake-one-light .token-builtin {
+    color: #bb8002;
+}
+
+/* One Dark theme */
+/* Inspired in https://github.com/akamud/vscode-theme-onedark */
+.codecake-one-dark {
+    background-color: #282c34;
+    color: #b6bdc8;
+}
+.codecake-one-dark .token-keyword {
+    color: #ca78e2;
+}
+.codecake-one-dark .token-string,
+.codecake-one-dark .token-attribute {
+    color: #93bd75;
+}
+.codecake-one-dark .token-bullet,
+.codecake-one-dark .token-title.function {
+    color: #62adea;
+}
+.codecake-one-dark .token-constant {
+    color: #5cb6c1;
+}
+.codecake-one-dark .token-quote,
+.codecake-one-dark .token-comment {
+    color: #5f6672;
+}
+.codecake-one-dark .token-number,
+.codecake-one-dark .token-unit,
+.codecake-one-dark .token-selector-class,
+.codecake-one-dark .token-selector-attr,
+.codecake-one-dark .token-selector-pseudo,
+.codecake-one-dark .token-attr {
+    color: #d19761;
+}
+.codecake-one-dark .token-section,
+.codecake-one-dark .token-tag,
+.codecake-one-dark .token-selector-tag {
+    color: #e4727b;
+}
+.codecake-one-dark .token-builtin {
+    color: #e4b867;
+}
+
 /* Common styles */
 .codecake-light .token-strong,
 .codecake-dark .token-strong,
-.codecake-monoblue .token-strong {
+.codecake-monoblue .token-strong,
+.codecake-one-light .token-strong,
+.codecake-one-dark .token-strong {
     font-weight: bold;
 }
 .codecake-light .token-emphasis,
 .codecake-dark .token-emphasis,
-.codecake-monoblue .token-emphasis {
+.codecake-monoblue .token-emphasis,
+.codecake-one-light .token-emphasis,
+.codecake-one-dark .token-emphasis {
     font-style: italic;
 }
