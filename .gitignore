@@ -2,6 +2,3 @@
 node_modules
 package-lock.json
 yarn.lock
-
-## External dependencies
-low.css

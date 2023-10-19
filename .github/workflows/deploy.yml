@@ -23,7 +23,6 @@ jobs:
           node-version: '16.x'
       - uses: actions/configure-pages@v1
       - run: yarn install
-      - run: rm -rf node_modules yarn.lock
       - uses: actions/upload-pages-artifact@v1
         with:
           name: github-pages

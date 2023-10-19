@@ -14,7 +14,6 @@
         "./codecake.css": "./codecake.css"
     },
     "scripts": {
-        "postinstall": "cp ./node_modules/lowcss/dist/low.css .",
         "serve": "serve ."
     },
     "files": [
@@ -26,7 +25,6 @@
     ],
     "license": "MIT",
     "devDependencies": {
-        "lowcss": "^0.17.0",
-        "serve": "^14.2.1"
+        "lowcss": "^0.17.0"
     }
 }
