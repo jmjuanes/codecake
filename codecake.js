@@ -230,7 +230,13 @@ const languages = {
     html: {
         aliases: [],
         rules: [
-            {regex: /^(<!--(?:.)*?-->)/, token: "comment"},
+            {
+                starts: /^<!--/,
+                ends: /-->/,
+                rules: [
+                    {regex: /^(.+)/, token: "comment"},
+                ],
+            },
             {
                 regex: /^(<([\w]+)(?![^>]*\/>)[^>]*>)/,
                 rules: [
@@ -246,7 +252,7 @@ const languages = {
                         rules: [
                             {regex: /^([\w\.\-\_]+)/, token: "attr"},
                             {regex: /^(=)/, token: "punctuation"},
-                            {regex: /^("(?:.)*?")/, token: "string"},
+                            {regex: /^(".*?")/, token: "string"},
                         ],
                     },
                     {regex: /^(>)/, token: "punctuation"},
@@ -264,8 +270,15 @@ const languages = {
     javascript: {
         aliases: ["js", "jsx"],
         rules: [
-            {regex: /^(\/\*(?:.|\s)*?\*\/|\/\/(?:.)*)/, token: "comment"},
-            {regex: /^(\'(?:.)*?\')|^(\"(?:.)*?\")/, token: "string"},
+            {regex: /^(\/\/.*)/, token: "comment"},
+            {
+                starts: /^\/\*/,
+                ends: /\*\//,
+                rules: [
+                    {regex: /^(.+)/, token: "comment"},
+                ],
+            },
+            {regex: /^(\'.*?\')|^(\".*?\")/, token: "string"},
             {
                 regex: /^(\`[^\`]*?\`)/,
                 rules: [
@@ -311,7 +324,13 @@ const languages = {
     css: {
         aliases: [],
         rules: [
-            {regex: /^(\/\*(?:.|\s)*?\*\/)/, token: "comment"},
+            {
+                starts: /^\/\*/,
+                ends: /\*\//,
+                rules: [
+                    {regex: /^(.+)/, token: "comment"},
+                ],
+            },
             {regex: /^([{},;])/, token: "punctuation"},
             {regex: /^(@(font-face|import|keyframes))/, token: "keyword"},
             {
@@ -370,16 +389,35 @@ const languages = {
     },
 };
 
+const getRule = (rules, str) => {
+    return rules.find(rule => {
+        if (rule.starts) {
+            return rule.starts.test(str) && rule.ends.test(str);
+        }
+        return rule.regex.test(str);
+    });
+};
+
+const getMatch = (rule, str) => {
+    if (rule.starts) {
+        const match = rule.ends.exec(str);
+        return str.substring(0, match.index + match[0].length);
+    }
+    return rule.regex.exec(str)[0];
+};
+
 const _highlight = (code, rules) => {
     let text = "", i = 0;
     while (i < code.length) {
-        const subCode = code.substr(i);
-        const rule = rules.find(rule => rule.regex.test(subCode));
+        const subCode = code.substring(i);
+        const rule = getRule(rules, subCode);
         if (rule) {
-            const match = subCode.match(rule.regex)[0];
-            text = text + (rule.rules ? _highlight(match, rule.rules) : `<span class="token-${rule.token}">${escape(match)}</span>`);
-            i = i + match.length;
-            continue;
+            const match = getMatch(rule, subCode);
+            if (match.length > 0) {
+                text = text + (rule.rules ? _highlight(match, rule.rules) : `<span class="token-${rule.token}">${escape(match)}</span>`);
+                i = i + match.length;
+                continue;
+            }
         }
         text = text + escape(code[i]);
         i = i + 1;
