@@ -39,6 +39,23 @@
     text-align: right;
     top: 0px;
 }
+.codecake-lines > div {
+    margin-bottom: 4px;
+}
+.codecake-lines > div:not(:first-child) {
+    margin-top: 4px;
+}
+
+/* Terrible hack to hide last empty line in editor */
+.codecake-editor .line:last-child,
+.codecake-lines > div:last-child {
+    display: none !important;
+}
+
+/* Editor plugins */
+.codecake-linewrapping {
+    white-space: pre-wrap !important;
+}
 
 /* Editor scrollbar */
 .codecake-editor::-webkit-scrollbar {

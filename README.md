@@ -62,6 +62,7 @@ The first argument of the `CodeCake.create` function is the reference to the `<d
 - `tabSize`: number of spaces for a tab. Default is `4`.
 - `autoIndent`: automatically add indentation on new lines. It also adds an extra line on closing brackets, braces and parenheses. Default is `true`.
 - `addClosing`: automatically close brackets, braces, parentheses, and quotes. Default is `true`.
+- `lineWrap`: allows the text to wrap to the next line when it reaches the end of the editor width. Default is `false`.
 - `highlight`: provide a custom function to highlight code. Default is `null` (no highlight). The pprovided function will be called with the current code to highlight and the language string provided in `options.language`.
 - `className`: custom classname to customize the editing area. Default is `""`.
 

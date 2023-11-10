@@ -60,7 +60,6 @@ const getEditorTemplate = () => {
 export const create = (parent, options = {}) => {
     let prevCode = "";
     let focus = false;
-    let linesCount = -1;
     let escKeyPressed = false;
     const listeners = {}; // Store events listeners
     const tab = options?.indentWithTabs ? "\t" : " ".repeat(options.tabSize || 4);
@@ -78,6 +77,9 @@ export const create = (parent, options = {}) => {
     // 'plaintext-only' mode is not supported in Firefox
     if (!options?.readOnly && editor.contentEditable !== "plaintext-only") {
         editor.setAttribute("contenteditable", "true");
+    }
+    if (options?.lineWrap) {
+        editor.classList.add("codecake-linewrapping");
     }
     // Manage code
     const setCode = (newCode, wait) => {
@@ -110,15 +112,14 @@ export const create = (parent, options = {}) => {
             currentCode = currentCode + endl;
             editor.textContent = currentCode;
         }
-        // Update line numbers
-        if (options.lineNumbers) {
-            const count = Math.max(currentCode.split(endl).length - 1, 1);
-            if (linesCount !== count) {
-                lines.innerText = Array.from({length: count}, (v, i) => i + 1).join("\n");
-                linesCount = count;
-            }
+        const newText = typeof options.highlight === "function" ? options.highlight(currentCode, options.language || "") : currentCode;
+        editor.innerHTML = `<span class="line">` + newText.split("\n").join(`</span>\n<span class="line">`) + `</span>`;
+        if (options?.lineNumbers) {
+            const linesC = Array.from(editor.querySelectorAll(`span.line`)).map((line, index) => {
+                return `<div style="height:${line.getBoundingClientRect().height}px;">${index + 1}</div>`;
+            });
+            lines.innerHTML = linesC.join("");
         }
-        (typeof options.highlight === "function") && (editor.innerHTML = options.highlight(currentCode, options.language || ""));
         (typeof listeners["change"] === "function") && listeners["change"](currentCode);
         focus && restorePosition(position);
     });
@@ -264,7 +265,13 @@ const languages = {
         aliases: ["js", "jsx"],
         rules: [
             {regex: /^(\/\*(?:.|\s)*?\*\/|\/\/(?:.)*)/, token: "comment"},
-            {regex: /^(\'(?:.)*?\')|^(\"(?:.)*?\")|^(\`(?:.|\s)*?\`)/, token: "string"},
+            {regex: /^(\'(?:.)*?\')|^(\"(?:.)*?\")/, token: "string"},
+            {
+                regex: /^(\`[^\`]*?\`)/,
+                rules: [
+                    {regex: /^(.+)/, token: "string"},
+                ],
+            },
             {regex: new RegExp(`^\\b(${jsKeywords.join("|")})\\b`), token: "keyword"},
             {regex: /^\b(true|false|null)\b/, token: "constant"},
             {regex: /^([+-]?([0-9]*[.])?[0-9]+)\b/, token: "number"},
@@ -338,7 +345,7 @@ const languages = {
             {regex: /^(#{1,6}[^\n]+)/, token: "section"},
             {regex: /^(\`{3}[^\`{3}]+\`{3})/, token: "code"},
             {regex: /^(\`[^\`\n]+\`)/, token: "code"},
-            {regex: /^\s*([\*\-+:]|\d+\.)\s/, token: "bullet"},
+            {regex: /^ *([\*\-+:]|\d+\.) /, token: "bullet"},
             {regex: /^(\*{2}[^\*\n]+\*{2})/, token: "strong"},
             {regex: /^(\*[^\*\n]+\*)/, token: "emphasis"},
             {
@@ -358,7 +365,7 @@ const languages = {
                     }
                 ],
             },
-            {regex: /^(\>\s[^\n]+)/, token: "quote"},
+            {regex: /^(\> [^\n]+)/, token: "quote"},
         ],
     },
 };
