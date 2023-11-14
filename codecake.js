@@ -67,6 +67,7 @@ export const create = (parent, options = {}) => {
     const autoIndent = options?.autoIndent ?? true;
     const addClosing = options?.addClosing ?? true;
     const openChars = `[({"'`, closeChars = `])}"'`;
+    const hlg = options?.highlight ?? ((c, l) => highlight(c, l));
     parent.appendChild(getEditorTemplate());
     const editor = parent.querySelector(".codecake-editor");
     const lines = parent.querySelector(".codecake-lines");
@@ -112,7 +113,7 @@ export const create = (parent, options = {}) => {
             currentCode = currentCode + endl;
             editor.textContent = currentCode;
         }
-        const newText = typeof options.highlight === "function" ? options.highlight(currentCode, options.language || "") : currentCode;
+        const newText = typeof hlg === "function" ? hlg(currentCode, options.language || "") : currentCode;
         editor.innerHTML = `<span class="line">` + newText.split("\n").join(`</span>\n<span class="line">`) + `</span>`;
         if (options?.lineNumbers) {
             const linesC = Array.from(editor.querySelectorAll(`span.line`)).map((line, index) => {

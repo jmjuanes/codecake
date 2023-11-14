@@ -63,7 +63,7 @@ The first argument of the `CodeCake.create` function is the reference to the `<d
 - `autoIndent`: automatically add indentation on new lines. It also adds an extra line on closing brackets, braces and parenheses. Default is `true`.
 - `addClosing`: automatically close brackets, braces, parentheses, and quotes. Default is `true`.
 - `lineWrap`: allows the text to wrap to the next line when it reaches the end of the editor width. Default is `false`.
-- `highlight`: provide a custom function to highlight code. Default is `null` (no highlight). The pprovided function will be called with the current code to highlight and the language string provided in `options.language`.
+- `highlight`: allows to disable or to provide a custom function to highlight code. Default is `CodeCake.highlight`. **Please read first the Custom highlight section** before using other syntax highlights.
 - `className`: custom classname to customize the editing area. Default is `""`.
 
 The `CodeCake.create` function will return an object with some methods that you can use to manipulate the editor.
@@ -102,6 +102,8 @@ CodeCake.create(parent, {
 });
 ```
 
+**Note**: after **v0.4.0**, you do not need to specify the `CodeCake.highlight` function in the `highlight` option, as it will be used by default.
+
 ## Themes
 
 We provide two themes to customize the editor and the highlighted code: `codecake-light` and `codecake-dark`.
@@ -115,17 +117,11 @@ const cake = CodeCake.create(parent, {
 
 ## Custom highlight
 
-You can use other syntax highlight like [highlight.js](https://highlightjs.org/) or [Prism](https://prismjs.com/). Call the syntax highlighter using the `options.highlight` option of `CodeCake.create`:
+After version **v0.4.0**, CodeCake does not support other syntax highlights like [highlight.js](https://highlightjs.org/) or [Prism](https://prismjs.com/).
 
-```js
-CodeCake.create(parent, {
-    language: "javascript"
-    highlight: (code, lang) => {
-        return hljs.highlight(code, {language: lang}).value;
-    },
-    // ...other editor options
-});
-```
+This is because the `lineWrap` feature (added in **v0.4.0**) involves splitting the code into lines and treating each line as an independent block. This design choice can affect the performance and accuracy of external syntax highlighters, especially when dealing with multiline strings or code blocks.
+
+We are working on a better documentation of our syntax highlighter, so you can extend it and include your custom language highlights.
 
 ## Preventing keyboard trap
 
