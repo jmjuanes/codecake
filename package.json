@@ -1,17 +1,19 @@
 {
     "name": "codecake",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "type": "module",
     "description": "Tiny code editor for the web",
-    "repository": "https://github.com/jmjuanes/codecake.git",
+    "repository": "https://github.com/jmjuanes/codecake",
     "author": "Josemi Juanes <hello@josemi.xyz>",
     "bugs": "https://github.com/jmjuanes/codecake/issues",
+    "homepage": "https://www.josemi.xyz/codecake",
     "main": "codecake.js",
     "module": "codecake.js",
     "exports": {
         ".": "./codecake.js",
         "./codecake.js": "./codecake.js",
-        "./codecake.css": "./codecake.css"
+        "./codecake.css": "./codecake.css",
+        "./package.json": "./package.json"
     },
     "scripts": {
         "serve": "serve ."
