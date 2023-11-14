@@ -41,6 +41,7 @@
 }
 .codecake-lines > div {
     margin-bottom: 4px;
+    min-height: 16px;
 }
 .codecake-lines > div:not(:first-child) {
     margin-top: 4px;
