@@ -2,6 +2,7 @@
     "name": "codecake",
     "version": "0.4.0",
     "type": "module",
+    "types": "./codecake.d.ts",
     "description": "Tiny code editor for the web",
     "repository": "https://github.com/jmjuanes/codecake",
     "author": "Josemi Juanes <hello@josemi.xyz>",
@@ -23,7 +24,8 @@
         "header.png",
         "LICENSE",
         "codecake.css",
-        "codecake.js"
+        "codecake.js",
+        "codecake.d.ts"
     ],
     "license": "MIT",
     "devDependencies": {
