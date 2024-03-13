@@ -4,7 +4,7 @@
 ![npm version](https://badgen.net/npm/v/codecake?labelColor=1d2734&color=21bf81)
 ![license](https://badgen.net/github/license/jmjuanes/codecake?labelColor=1d2734&color=21bf81)
 
-Why another code editor for the web? I wanted something ver simple, tiny and minimalistic, just for editing small chunks of HTML, JavaScript or CSS. Finally I decided to create my own code editor with a small syntax highlight.
+Why another code editor for the web? I wanted something very simple, tiny and minimalistic, just for editing small chunks of HTML, JavaScript or CSS. Finally I decided to create my own code editor with a small syntax highlight.
 
 ## Demo
 
