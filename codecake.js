@@ -78,6 +78,16 @@ export const create = (parent, options = {}) => {
     // 'plaintext-only' mode is not supported in Firefox
     if (!options?.readOnly && editor.contentEditable !== "plaintext-only") {
         editor.setAttribute("contenteditable", "true");
+        editor.addEventListener("paste", event => {
+            let insertText = event.clipboardData.getData("text/plain");
+            event.preventDefault()
+            // insert text at cursor position
+            const sel = window.getSelection();
+            const range = sel.getRangeAt(0);
+            range.deleteContents();
+            range.insertNode(document.createTextNode(insertText));
+            update(10);
+        });
     }
     if (options?.lineWrap) {
         editor.classList.add("codecake-linewrapping");
