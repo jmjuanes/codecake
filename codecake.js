@@ -79,7 +79,7 @@ export const create = (parent, options = {}) => {
     if (!options?.readOnly && editor.contentEditable !== "plaintext-only") {
         editor.setAttribute("contenteditable", "true");
         editor.addEventListener("paste", event => {
-            let insertText = event.clipboardData.getData("text/plain");
+            const insertText = event.clipboardData.getData("text/plain");
             event.preventDefault()
             // insert text at cursor position
             const sel = window.getSelection();
