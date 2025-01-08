@@ -53,11 +53,6 @@
     display: none !important;
 }
 
-/* Editor plugins */
-.codecake-linewrapping {
-    white-space: pre-wrap !important;
-}
-
 /* Editor scrollbar */
 .codecake-editor::-webkit-scrollbar {
     width: 8px;
