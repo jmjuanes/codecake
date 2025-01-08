@@ -58,16 +58,13 @@ const getEditorTemplate = () => {
 
 // Create a new instance of the code editor
 export const create = (parent, options = {}) => {
-    let prevCode = "";
-    let focus = false;
-    let escKeyPressed = false;
+    let prevCode = "", linesCount = -1, focus = false, escKeyPressed = false;
     const listeners = {}; // Store events listeners
     const tab = options?.indentWithTabs ? "\t" : " ".repeat(options.tabSize || 4);
     const endl = String.fromCharCode(10);
     const autoIndent = options?.autoIndent ?? true;
     const addClosing = options?.addClosing ?? true;
     const openChars = `[({"'`, closeChars = `])}"'`;
-    const hlg = options?.highlight ?? ((c, l) => highlight(c, l));
     parent.appendChild(getEditorTemplate());
     const editor = parent.querySelector(".codecake-editor");
     const lines = parent.querySelector(".codecake-lines");
@@ -88,9 +85,6 @@ export const create = (parent, options = {}) => {
             range.insertNode(document.createTextNode(insertText));
             update(10);
         });
-    }
-    if (options?.lineWrap) {
-        editor.classList.add("codecake-linewrapping");
     }
     // Manage code
     const setCode = (newCode, wait) => {
@@ -123,14 +117,14 @@ export const create = (parent, options = {}) => {
             currentCode = currentCode + endl;
             editor.textContent = currentCode;
         }
-        const newText = typeof hlg === "function" ? hlg(currentCode, options.language || "") : currentCode;
-        editor.innerHTML = `<span class="line">` + newText.split("\n").join(`</span>\n<span class="line">`) + `</span>`;
-        if (options?.lineNumbers) {
-            const linesC = Array.from(editor.querySelectorAll(`span.line`)).map((line, index) => {
-                return `<div style="height:${line.getBoundingClientRect().height}px;">${index + 1}</div>`;
-            });
-            lines.innerHTML = linesC.join("");
+        if (options.lineNumbers) {
+            const count = Math.max(currentCode.split(endl).length - 1, 1);
+            if (linesCount !== count) {
+                lines.innerText = Array.from({length: count}, (v, i) => i + 1).join("\n");
+                linesCount = count;
+            }
         }
+        (typeof options.highlight === "function") && (editor.innerHTML = options.highlight(currentCode, options.language || ""));
         (typeof listeners["change"] === "function") && listeners["change"](currentCode);
         focus && restorePosition(position);
     });
