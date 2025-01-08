@@ -37,18 +37,11 @@ interface CodeCakeOptions {
     addClosing: boolean;
 
     /**
-     * Allows the text to wrap to the next line when it reaches the end of the editor width
-     * @default false
-     */
-    lineWrap: boolean;
-
-    /**
-     * The function to use to highlight the code. Note that this does not support other
-     * syntax highlighters due to the lineWrap feature of CodeCake.
+     * The function to use to highlight the code.
      * @param code The code the be highlighted
      * @param language The language to highlight the code in
      * @returns An HTML string representing the highlighted code
-     * @default CodeCake.highlight
+     * @default null
      */
     highlight: (code: string, language: string) => string;
 
